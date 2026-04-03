@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>이베코쨩 - 방치형 게임</title>
 <style>
 /* ===== Reset & Base ===== */
@@ -36,12 +36,18 @@
     font-weight: 800;
     font-display: swap;
 }
-body {
-  background: #100f10;
-  font-family: 'Noto Sans KR', sans-serif;
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100dvh;
+  height: 100vh; /* dvh 미지원 브라우저 폴백 */
+  height: 100dvh;
   overflow: hidden;
-  width: 100vw;
-  height: 100vh;
+}
+body {
+  background: #1a1a1a;
+  font-family: 'Noto Sans KR', sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -50,14 +56,23 @@ body {
 /* ===== Game Container (9:16) ===== */
 #game-container {
   position: relative;
-  width: min(100vw, 56.25vh);
-  height: min(100vh, 177.78vw);
-  max-width: 450px;
-  max-height: 800px;
+  aspect-ratio: 9 / 16;
+  height: 100dvh;
+  height: 100vh; /* 폴백 */
+  height: 100dvh;
+  max-height: 100dvh;
+  max-width: min(100vw, 450px);
   border-radius: 22px;
   overflow: hidden;
   box-shadow: 0 8px 32px rgba(180, 130, 200, 0.45), 0 2px 8px rgba(0,0,0,0.1);
   background: #fdf0f8;
+}
+
+/* PC: 가로가 충분히 넓으면 높이 제한 */
+@media (min-width: 1024px) {
+  #game-container {
+    max-height: 800px;
+  }
 }
 
 /* ===== Top Area (전체 배경) ===== */
@@ -599,7 +614,7 @@ body {
 /* 배경+캐릭터 줌인 */
 #top-area {
   transition: transform 0.5s ease;
-  transform-origin: 50% 40%;
+  transform-origin: 50% 50%; /* Y값을 키우면 포커스가 아래로 내려감 */
 }
 #game-container.touch-mode #top-area {
   transform: scale(1.4);
