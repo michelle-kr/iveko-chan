@@ -9,7 +9,33 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap');
+@font-face {
+    font-family: 'GyeonggiMillenniumTitle';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-3@1.0/Title_Light.woff') format('woff');
+    font-weight: 300;
+    font-display: swap;
+}
 
+@font-face {
+    font-family: 'GyeonggiMillenniumTitle';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-3@1.0/Title_Medium.woff') format('woff');
+    font-weight: 500;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'GyeonggiMillenniumTitle';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-3@1.0/Title_Bold.woff') format('woff');
+    font-weight: 700;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'GyeonggiMillenniumTitle';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-3@1.0/TitleV.woff') format('woff');
+    font-weight: 800;
+    font-display: swap;
+}
 body {
   background: #100f10;
   font-family: 'Noto Sans KR', sans-serif;
@@ -31,15 +57,13 @@ body {
   border-radius: 22px;
   overflow: hidden;
   box-shadow: 0 8px 32px rgba(180, 130, 200, 0.45), 0 2px 8px rgba(0,0,0,0.1);
-  display: flex;
-  flex-direction: column;
   background: #fdf0f8;
 }
 
-/* ===== Top Area (70%) ===== */
+/* ===== Top Area (전체 배경) ===== */
 #top-area {
-  position: relative;
-  flex: 0 0 80%;
+  position: absolute;
+  inset: 0;
   overflow: hidden;
 }
 
@@ -67,23 +91,26 @@ body {
 /* ===== Gauge Bars ===== */
 #gauges {
   position: absolute;
-  top: 12px;
+  top: 22px;
   left: 12px;
   z-index: 10;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 26px;
 }
 
 .gauge-row {
   display: flex;
   align-items: center;
-  gap: 4px;
+  width: 100%;
+  position: relative;
 }
 
 .gauge-icon {
   width: 24px;
   height: 24px;
+  position: absolute;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -97,6 +124,8 @@ body {
 .gauge-bar-outer {
   width: 88px;
   height: 14px;
+  position: absolute;
+  left: 16px;
   background: rgba(255, 255, 255, 0.72);
   border-radius: 7px;
   overflow: hidden;
@@ -257,15 +286,22 @@ body {
 /* ===== Character ===== */
 #character {
   position: absolute;
-  bottom: 20px;
+  bottom: 16%;  /* ← 캐릭터 위치 조정: 이 값을 변경하세요 */
   left: 50%;
   transform: translateX(-50%) scaleY(1);
   transform-origin: bottom center;
-  height: 78%;
+  height: 65%;
   z-index: 5;
   pointer-events: none;
   filter: drop-shadow(0 4px 14px rgba(160,80,130,0.25));
   animation: characterBreath 4.6s ease-in-out infinite;
+  transition: filter 0.8s ease;
+}
+#character.sunset {
+  filter: brightness(0.9) sepia(0.5) hue-rotate(-20deg) saturate(1.5);
+}
+#character.night {
+  filter: brightness(0.8) sepia(0.4) hue-rotate(-5deg) drop-shadow(0 4px 14px rgba(160,80,130,0.25));
 }
 
 @keyframes characterBreath {
@@ -273,16 +309,37 @@ body {
   50% { transform: translateX(-50%) scaleY(1.01); }
   100% { transform: translateX(-50%) scaleY(1); }
 }
+/* ===== 캐릭터 그림자 ===== */
+.chara-shadow {
+  display: block;
+  width: 130px;
+  height: 70px;
+  position: absolute;
+  z-index: 4;
+    bottom: 13.5%;
+    left: 51%;
+  background: rgba(63, 23, 23, 0.4);
+  mix-blend-mode: multiply;
+  clip-path: ellipse(50% 50%);
+  transform: translateX(-50%) scaleY(1);
+  transform-origin: bottom center;
+}
 
-/* ===== Bottom Panel (30%) ===== */
+/* ===== Bottom Panel (하단 오버레이) ===== */
 #bottom-panel {
-  flex: 0 0 20%;
-  background: linear-gradient(180deg, #fdf4fa 0%, #f5e0f0 50%, #ede0f5 100%);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: none;
   display: flex;
-  flex-direction: column;
-  padding: 8px 12px 6px;
-  border-top: 2.5px solid #f0d4e8;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: end;
+  padding: 30px 20px;
   gap: 6px;
+  z-index: 10;
 }
 
 /* Points Bar */
@@ -323,19 +380,30 @@ body {
 
 /* Main 4 Buttons */
 #main-btns {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 8px;
   flex: 1;
-  align-items: center;
+  align-items: end;
 }
-
+#main-btns.gacha {
+  flex-direction: row;
+  gap: 12px;
+}
+#main-btns.menu {
+  flex-direction: column;
+  gap: 24px;
+}
 .mbw {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+  cursor: pointer;
+  transition: transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
 }
+.mbw:active { transform: scale(0.93); }
 
 /* Gacha bubble */
 .mbw .bub {
@@ -343,9 +411,10 @@ body {
   top: -18px;
   background: #ff8ec4;
   color: #fff;
-  font-size: 7px;
-  font-weight: 700;
-  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: normal;
+  letter-spacing: -0.5px;
+  padding: 2px 4px;
   border-radius: 8px;
   white-space: nowrap;
   box-shadow: 0 2px 5px rgba(255,100,160,0.3);
@@ -368,26 +437,50 @@ body {
 }
 
 .mb {
-  width: 100%;
+  width: 64px;
+  height: 64px;
   aspect-ratio: 1;
-  max-height: 78px;
-  border: 2px solid #f0d4e8;
-  border-radius: 16px;
-  background: linear-gradient(150deg, #fff6fc, #fce8f4);
+  border: 2px solid #553a42;
+  border-radius: 100px;
+  background: #fff6fc;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 2px;
   cursor: pointer;
-  box-shadow: 0 3px 10px rgba(200,150,180,0.3);
-  transition: transform 0.1s, box-shadow 0.2s;
   -webkit-tap-highlight-color: transparent;
 }
-.mb:active { transform: scale(0.93); box-shadow: 0 1px 4px rgba(200,150,180,0.2); }
-.mb .ic { font-size: 22px; }
+.mb:active { box-shadow: 0 1px 4px rgba(200,150,180,0.2); }
+.mb .ic {
+  width: 48px;
+  height: 48px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+#btn-gacha .ic { background-image: url('assets/icon_gacha.png'); }
+#btn-gift .ic  { background-image: url('assets/icon_gift.png'); }
+#btn-closet .ic  { background-image: url('assets/icon_closet.png'); }
+#btn-touch .ic { background-image: url('assets/icon_touch.png'); }
 .mb .la { font-size: 8px; font-weight: 700; color: #a06a90; letter-spacing: 0.5px; }
-.mb .su { font-size: 7px; color: #c09ab0; font-weight: 600; margin-top: -1px; }
+.mb .su { 
+  position: absolute;
+  bottom: -12px;
+  font-size: 20px; 
+  color: #fff; 
+  font-family: 'GyeonggiMillenniumTitle', sans-serif; 
+  text-shadow: 
+    -2px -2px 0 #472f36,  
+     2px -2px 0 #472f36,
+    -2px  2px 0 #472f36,
+     2px  2px 0 #472f36,
+    -2px  0   0 #472f36,
+     2px  0   0 #472f36,
+     0   -2px 0 #472f36,
+     0    2px 0 #472f36;
+
+}
 
 /* Save Status */
 #save-st {
@@ -541,6 +634,7 @@ body {
 
     <!-- Character -->
     <img id="character" src="assets/iveko-chan.png" alt="이베코쨩">
+    <div class="chara-shadow"></div>
   </div>
 
   <!-- ====== BOTTOM (30%) ====== -->
@@ -553,34 +647,35 @@ body {
     </div> -->
 
     <!-- 4 Main Buttons -->
-    <div id="main-btns">
+    <div id="main-btns" class="gacha">
+      <div class="mbw">
+        <span class="bub">일일 뽑기 가능!</span>
+        <button class="mb" id="btn-gacha">
+          <span class="ic"></span>
+          <span class="su">뽑기</span>
+        </button>
+      </div>
+    </div>
+    <div id="main-btns" class="menu">
       <div class="mbw">
         <button class="mb" id="btn-gift">
-          <span class="ic">🎁</span>
-          <span class="su">선물하기</span>
+          <span class="ic"></span>
+          <span class="su">선물</span>
         </button>
       </div>
       <div class="mbw">
-        <button class="mb" id="btn-ward">
-          <span class="ic">👗</span>
+        <button class="mb" id="btn-closet">
+          <span class="ic"></span>
           <span class="su">옷장</span>
         </button>
       </div>
       <div class="mbw">
         <button class="mb" id="btn-touch">
-          <span class="ic">💕</span>
-          <span class="su">터치하기</span>
-        </button>
-      </div>
-      <div class="mbw">
-        <span class="bub">매일 무료 10연 가능!</span>
-        <button class="mb" id="btn-gacha">
-          <span class="ic">🎰</span>
-          <span class="su">뽑기</span>
+          <span class="ic"></span>
+          <span class="su">터치</span>
         </button>
       </div>
     </div>
-
     <!-- Save Status -->
     <!-- <div id="save-st">저장 중... (LocalStorage)</div> -->
   </div>
@@ -713,7 +808,7 @@ function applyBgState(state, useFade) {
 
   if (state === 'sunset') {
     nextSrc = 'assets/day.png';
-    nextFilter = 'sepia(0.5) hue-rotate(-15deg) brightness(0.9)';
+    nextFilter = 'brightness(0.9) sepia(0.5) hue-rotate(-20deg) saturate(1.5)';
   } else if (state === 'night') {
     nextSrc = 'assets/night.png';
     nextFilter = 'none';
@@ -768,6 +863,11 @@ function setBg(h, useFade) {
   } else {
     state = 'night';
   }
+  // 캐릭터 day/night/sunset 클래스 적용
+  var $char = document.getElementById('character');
+  $char.classList.remove('day', 'night', 'sunset');
+  $char.classList.add(state);
+
   if (state === lastBgState) return;
   lastBgState = state;
   applyBgState(state, !!useFade);
@@ -796,19 +896,17 @@ function syncToRealtimeNow() {
 tick();
 setInterval(tick, 1000);
 
-// ===== 동기화 토글 =====
+// ===== 동기화 토글 (모달 내: 슬라이더만 현재 시간으로 맞춤, 게임 상태 변경 없음) =====
+var modalSync = true; // 모달 내 동기화 토글 상태 (UI 전용)
 $tog.addEventListener('click', function() {
-  isSyncMode = !isSyncMode;
-  $tog.classList.toggle('on', isSyncMode);
+  modalSync = !modalSync;
+  $tog.classList.toggle('on', modalSync);
 
-  if (isSyncMode) {
-    syncToRealtimeNow();
-  } else {
-    var d = new Date();
-    manualHour   = d.getHours();
-    manualMinute = d.getMinutes();
-    manualSecond = d.getSeconds();
-    manualBase   = Date.now();
+  if (modalSync) {
+    var now = new Date();
+    $slH.value = now.getHours();
+    $slM.value = now.getMinutes();
+    refreshModal();
   }
 });
 
@@ -817,6 +915,8 @@ $clock.addEventListener('click', function() {
   var t = getTime();
   $slH.value = t.h;
   $slM.value = t.m;
+  modalSync = isSyncMode;
+  $tog.classList.toggle('on', modalSync);
   refreshModal();
   $mo.classList.add('show');
 });
@@ -833,14 +933,7 @@ function refreshModal() {
 }
 
 function forceManualOffBySlider() {
-  if (isSyncMode) {
-    var t = getTime();
-    manualHour = t.h;
-    manualMinute = t.m;
-    manualSecond = t.s;
-    manualBase = Date.now();
-  }
-  isSyncMode = false;
+  modalSync = false;
   $tog.classList.remove('on');
 }
 
@@ -855,16 +948,27 @@ $slM.addEventListener('input', function() {
 });
 
 $mOk.addEventListener('click', function() {
-  manualHour   = parseInt($slH.value, 10);
-  manualMinute = parseInt($slM.value, 10);
-  manualSecond = 0;
-  manualBase   = Date.now();
-  isSyncMode   = false;
-  $tog.classList.remove('on');
+  var h = parseInt($slH.value, 10);
+  var m = parseInt($slM.value, 10);
+
+  if (modalSync) {
+    // 현실 동기화 모드: 실시간 시간 사용
+    isSyncMode = true;
+    manualBase = null;
+  } else {
+    // 수동 모드
+    isSyncMode = false;
+    manualHour   = h;
+    manualMinute = m;
+    manualSecond = 0;
+    manualBase   = Date.now();
+  }
+
   $mo.classList.remove('show');
   lastBgState = '';
-  setClock(manualHour, manualMinute, manualSecond);
-  setBg(manualHour, true);
+  var t = getTime();
+  setClock(t.h, t.m, t.s);
+  setBg(t.h, true);
 });
 
 $mNo.addEventListener('click', function() {
