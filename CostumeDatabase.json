@@ -1,0 +1,31 @@
+{
+  "costumes": [ // 코스튬 마스터 데이터
+    {
+      "id": "cos_head_crown_01",
+      "name": "황금 왕관",
+      "part": "head", // [설계의도] 부위별 스탯 특화 (Head = 자금)
+      "set_id": "set_royal_01", // [설계의도] 세트 효과 연결 고리
+      "buffType": "FUND_GAIN", 
+      "buffValue": 0.10, // 후원금 10% 증가
+      "grade": "RARE"
+    },
+    {
+      "id": "cos_body_dress_01",
+      "name": "이브닝 드레스",
+      "part": "body", // [설계의도] 부위별 스탯 특화 (Body = 구독자)
+      "set_id": "set_royal_01",
+      "buffType": "SUB_GAIN",
+      "buffValue": 0.15, // 구독자 15% 증가
+      "grade": "RARE"
+    }
+  ],
+  "set_bonuses": [ // 세트 효과 마스터 데이터
+    {
+      "set_id": "set_royal_01",
+      "name": "로열 패밀리의 품격",
+      "required_count": 2, // [설계의도] head + body 모두 장착 시 활성화
+      "buffType": "TENSION_DECAY_DOWN", // [설계의도] 밸런스를 고려한 유지력 버프
+      "buffValue": 0.20 // 텐션 하락 속도 20% 감소
+    }
+  ]
+}

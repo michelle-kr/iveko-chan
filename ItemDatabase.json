@@ -1,0 +1,187 @@
+{
+  "consumables": [
+    /* --- 음식류 (MEAL): 스태미나 회복 특화 --- */
+    {
+      "id": "itm_food_01",
+      "name": "매니저 샌드위치",
+      "description": "매니저가 직접 싼 소화 잘 되는 샌드위치.",
+      "type": "MEAL",
+      "staminaGain": 30,
+      "tensionGain": 10,
+      "grade": "COMMON"
+    },
+    {
+      "id": "itm_food_02",
+      "name": "편의점 삼각김밥",
+      "description": "가장 기본적이고 든든한 한 끼.",
+      "type": "MEAL",
+      "staminaGain": 20,
+      "tensionGain": 5,
+      "grade": "COMMON"
+    },
+    {
+      "id": "itm_food_03",
+      "name": "따끈한 컵라면",
+      "description": "방송 중에 먹기 좋은 짭짤한 라면.",
+      "type": "MEAL",
+      "staminaGain": 25,
+      "tensionGain": 15,
+      "grade": "COMMON"
+    },
+    {
+      "id": "itm_food_04",
+      "name": "매콤 소고기 고추장 비빔밥",
+      "description": "힘이 불끈 솟는 매니저표 비빔밥.",
+      "type": "MEAL",
+      "staminaGain": 45,
+      "tensionGain": 20,
+      "grade": "RARE"
+    },
+    {
+      "id": "itm_food_05",
+      "name": "치즈 폭탄 햄버거",
+      "description": "고칼로리는 언제나 정답입니다.",
+      "type": "MEAL",
+      "staminaGain": 55,
+      "tensionGain": 25,
+      "grade": "RARE"
+    },
+    {
+      "id": "itm_food_06",
+      "name": "야채 가득 도시락",
+      "description": "건강을 생각한 신선한 도시락.",
+      "type": "MEAL",
+      "staminaGain": 40,
+      "tensionGain": 10,
+      "grade": "RARE"
+    },
+    {
+      "id": "itm_food_07",
+      "name": "육즙 가득 스테이크",
+      "description": "특별한 날을 위한 최고급 단백질.",
+      "type": "MEAL",
+      "staminaGain": 75,
+      "tensionGain": 40,
+      "grade": "LEGENDARY"
+    },
+    {
+      "id": "itm_food_08",
+      "name": "특선 초밥 세트",
+      "description": "이베코짱이 가장 좋아하는 신선한 초밥.",
+      "type": "MEAL",
+      "staminaGain": 65,
+      "tensionGain": 50,
+      "grade": "LEGENDARY"
+    },
+    {
+      "id": "itm_food_09",
+      "name": "원기 회복 장어 덮밥",
+      "description": "밤샘 방송도 거뜬하게 만드는 보양식.",
+      "type": "MEAL",
+      "staminaGain": 85,
+      "tensionGain": 20,
+      "grade": "LEGENDARY"
+    },
+    {
+      "id": "itm_food_10",
+      "name": "럭셔리 전복죽",
+      "description": "위장에도 좋고 영양도 만점인 전복죽.",
+      "type": "MEAL",
+      "staminaGain": 95,
+      "tensionGain": 15,
+      "grade": "LEGENDARY"
+    },
+
+    /* --- 디저트류 (DESSERT): 텐션 회복 특화 --- */
+    {
+      "id": "itm_dessert_01",
+      "name": "딸기 쇼트 케이크",
+      "description": "달콤한 딸기가 올라간 부드러운 케이크.",
+      "type": "DESSERT",
+      "staminaGain": 5,
+      "tensionGain": 150,
+      "grade": "RARE"
+    },
+    {
+      "id": "itm_dessert_02",
+      "name": "색깔 마카롱",
+      "description": "한 입에 쏙 들어가는 달콤함.",
+      "type": "DESSERT",
+      "staminaGain": 2,
+      "tensionGain": 40,
+      "grade": "COMMON"
+    },
+    {
+      "id": "itm_dessert_03",
+      "name": "초코 칩 쿠키",
+      "description": "우유와 함께 먹으면 텐션 업!",
+      "type": "DESSERT",
+      "staminaGain": 3,
+      "tensionGain": 60,
+      "grade": "COMMON"
+    },
+    {
+      "id": "itm_dessert_04",
+      "name": "바닐라 아이스크림",
+      "description": "시원하고 달콤한 휴식 시간.",
+      "type": "DESSERT",
+      "staminaGain": 5,
+      "tensionGain": 70,
+      "grade": "COMMON"
+    },
+    {
+      "id": "itm_dessert_05",
+      "name": "무지개 솜사탕",
+      "description": "입안에서 사르르 녹는 기적의 단맛.",
+      "type": "DESSERT",
+      "staminaGain": 1,
+      "tensionGain": 90,
+      "grade": "COMMON"
+    },
+    {
+      "id": "itm_dessert_06",
+      "name": "폭신한 생크림 도넛",
+      "description": "당 충전이 필요할 땐 역시 도넛.",
+      "type": "DESSERT",
+      "staminaGain": 8,
+      "tensionGain": 120,
+      "grade": "RARE"
+    },
+    {
+      "id": "itm_dessert_07",
+      "name": "계절 과일 파르페",
+      "description": "눈과 입이 모두 즐거운 화려한 디저트.",
+      "type": "DESSERT",
+      "staminaGain": 10,
+      "tensionGain": 180,
+      "grade": "RARE"
+    },
+    {
+      "id": "itm_dessert_08",
+      "name": "진한 티라미수",
+      "description": "기운이 번쩍 나는 정통 티라미수.",
+      "type": "DESSERT",
+      "staminaGain": 5,
+      "tensionGain": 220,
+      "grade": "RARE"
+    },
+    {
+      "id": "itm_dessert_09",
+      "name": "갤럭시 은하수 젤리",
+      "description": "보는 것만으로도 영감이 떠오르는 신비한 젤리.",
+      "type": "DESSERT",
+      "staminaGain": 2,
+      "tensionGain": 350,
+      "grade": "LEGENDARY"
+    },
+    {
+      "id": "itm_dessert_10",
+      "name": "황금 벌집 크로플",
+      "description": "바삭함과 달콤함의 완벽한 조화.",
+      "type": "DESSERT",
+      "staminaGain": 15,
+      "tensionGain": 500,
+      "grade": "LEGENDARY"
+    }
+  ]
+}

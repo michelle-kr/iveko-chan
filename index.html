@@ -8,7 +8,7 @@
 /* ===== Reset & Base ===== */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&family=Orbitron:wght@600;700;800&display=swap');
 @font-face {
     font-family: 'GyeonggiMillenniumTitle';
     src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-3@1.0/Title_Light.woff') format('woff');
@@ -36,6 +36,13 @@
     font-weight: 800;
     font-display: swap;
 }
+
+@font-face {
+  font-family: 'DosGothic';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_eight@1.0/DOSGothic.woff') format('woff');
+  font-weight: normal;
+  font-display: swap;
+}
 html, body {
   margin: 0;
   padding: 0;
@@ -44,6 +51,11 @@ html, body {
   height: 100vh; /* dvh 미지원 브라우저 폴백 */
   height: 100dvh;
   overflow: hidden;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 body {
   background: #1a1a1a;
@@ -51,13 +63,17 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 /* ===== Game Container (9:16) ===== */
 #game-container {
   position: relative;
   aspect-ratio: 9 / 16;
-  height: 100dvh;
   height: 100vh; /* 폴백 */
   height: 100dvh;
   max-height: 100dvh;
@@ -66,6 +82,14 @@ body {
   overflow: hidden;
   box-shadow: 0 8px 32px rgba(180, 130, 200, 0.45), 0 2px 8px rgba(0,0,0,0.1);
   background: #fdf0f8;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+img {
+  -webkit-user-drag: none;
 }
 
 /* PC: 가로가 충분히 넓으면 높이 제한 */
@@ -91,6 +115,7 @@ body {
   opacity: 0;
   transition: opacity 0.55s ease, filter 0.8s ease;
   z-index: 0;
+  filter: blur(1px);
 }
 
 #bg-a {
@@ -103,158 +128,243 @@ body {
   z-index: 0;
 }
 
-/* ===== Gauge Bars ===== */
-#gauges {
+/* ===== Top HUD (Reference UI) ===== */
+#top-hud {
   position: absolute;
-  top: 22px;
-  left: 12px;
-  z-index: 10;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 24px);
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 6px;
+  z-index: 13;
+}
+
+.hud-box {
+  border-radius: 14px;
+  border: 1px solid rgba(255, 132, 233, 0.56);
+  padding: 10px;
+  background:
+    linear-gradient(180deg, rgba(12, 10, 22, 0.95), rgba(10, 9, 18, 0.95)),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0 1px, transparent 1px 5px);
+  box-shadow:
+    0 0 0 1px rgba(100, 50, 112, 0.5) inset,
+    0 0 14px rgba(248, 103, 225, 0.3),
+    0 6px 18px rgba(0, 0, 0, 0.5);
+}
+
+.hud-box.left-box {
+  width: 37%;
+  border-color: rgba(114, 180, 255, 0.45);
+  box-shadow:
+    0 0 0 1px rgba(35, 70, 120, 0.42) inset,
+    0 0 14px rgba(95, 162, 255, 0.2),
+    0 6px 18px rgba(0, 0, 0, 0.48);
+}
+.hud-box.right-box {
+  width: calc(63% - 6px);
+  padding: 10px 10px;
+  border-color: rgba(255, 120, 206, 0.7);
+  box-shadow:
+    0 0 0 1px rgba(124, 54, 104, 0.55) inset,
+    0 0 18px rgba(255, 102, 214, 0.32),
+    0 8px 20px rgba(0, 0, 0, 0.56);
+}
+.hud-left {
   display: flex;
   flex-direction: column;
-  gap: 26px;
-}
-
-.gauge-row {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  position: relative;
-}
-
-.gauge-icon {
-  width: 24px;
-  height: 24px;
-  position: absolute;
-  z-index: 1;
-  display: flex;
-  align-items: center;
   justify-content: center;
+  gap: 2px;
+}
+
+.status-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+}
+
+.status-heart-label {
   font-size: 15px;
-  background: rgba(255,255,255,0.88);
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(200, 150, 180, 0.45);
+  color: #fff;
+  font-family: 'DosGothic', 'Noto Sans KR', sans-serif;
+  text-shadow: 0 1px 4px rgba(255, 180, 90, 0.18);
+}
+.status-ability-label {
+  font-size: 12px;
+  color: #ffb36b;
+  font-family: 'DosGothic', 'Noto Sans KR', sans-serif;
+  text-shadow: 0 1px 4px rgba(255, 180, 90, 0.18);
+}
+
+.status-icon-slot {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
   flex-shrink: 0;
 }
-
-.gauge-bar-outer {
-  width: 88px;
-  height: 14px;
-  position: absolute;
-  left: 16px;
-  background: rgba(255, 255, 255, 0.72);
-  border-radius: 7px;
-  overflow: hidden;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.08), 0 1px 5px rgba(200,150,180,0.3);
-  border: 1.5px solid rgba(255, 255, 255, 0.9);
+.status-icon-slot.manager-level {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url('assets/icon_heart.png');
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  font-size: 13px;
+  font-family: 'DosGothic';
+}
+.status-icon-slot.tension {
+  background-image: url('assets/icon_tension.png');
+  background-size: cover;
+  background-position: center;
+  filter: drop-shadow(0px 0px 2px rgb(253 128 50 / 50%));
+}
+.status-icon-slot.stamina {
+  background-image: url('assets/icon_stamina.png');
+  background-size: cover;
+  background-position: center;
+  filter: drop-shadow(0px 0px 2px rgb(244 241 156 / 50%));
+}
+.status-label-gauge {
+  width: 100%;
 }
 
-.gauge-bar-inner {
+.status-track {
+  position: relative;
+  width: 100%;
+  height: 16px;
+  border-radius: 5px;
+  border: 2px solid rgba(255, 163, 89, 0.75);
+  background: rgba(31, 15, 7, 0.8);
+  box-shadow: 0 0 8px rgba(255, 160, 67, 0.25), inset 0 0 8px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
+.status-fill {
   height: 100%;
-  border-radius: 7px;
+  border-radius: 3px;
+  width: var(--fill, 65%);
   transition: width 0.5s ease;
 }
 
-.gauge-bar-inner.heart   { background: linear-gradient(90deg, #ffb3d1, #ff5e94); width: 75%; }
-.gauge-bar-inner.hunger  { background: linear-gradient(90deg, #ffdda6, #ffaa3b); width: 60%; }
-.gauge-bar-inner.fatigue { background: linear-gradient(90deg, #b8c9ff, #7090ff); width: 40%; }
+.status-fill.life {
+  background: linear-gradient(90deg, #ff8d5a 0%, #ff9c45 38%, #f7b459 100%);
+  box-shadow: 0 0 12px rgba(255, 149, 73, 0.65);
+}
 
-/* ===== Clock & Controls (Top Right) ===== */
-#top-right {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 10;
+.status-fill.sub {
+  background: linear-gradient(90deg, #ffcc6d 0%, #f7d879 40%, #f0e996 100%);
+  box-shadow: 0 0 12px rgba(255, 226, 142, 0.65);
+}
+
+.hud-right {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 7px;
+  justify-content: center;
+  gap: 4px;
 }
 
-/* ------- Analog Clock ------- */
-#clock-wrap {
-  width: 74px;
-  height: 74px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #fffcf8 55%, #f6e8f2 100%);
-  border: 3px solid #e8c8dc;
-  box-shadow: 0 3px 12px rgba(200,150,180,0.45), inset 0 0 10px rgba(200,150,180,0.12);
-  position: relative;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-#clock-wrap:active { transform: scale(0.97); }
-
-.clk-center {
-  position: absolute;
-  width: 7px;
-  height: 7px;
-  background: #d47fa6;
-  border-radius: 50%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 6;
-  box-shadow: 0 0 3px rgba(212,127,166,0.5);
-}
-
-.clk-mark {
-  position: absolute;
-  width: 2px;
-  height: 5px;
-  background: #d4a8c2;
-  top: 5px;
-  left: 50%;
-  margin-left: -1px;
-  transform-origin: 1px 32px;
-  border-radius: 1px;
-}
-.clk-mark.big {
-  height: 8px;
-  width: 2.5px;
-  margin-left: -1.25px;
-  background: #be7ea0;
-  transform-origin: 1.25px 32px;
-}
-
-/* Clock number labels */
-.clk-num {
-  position: absolute;
-  font-size: 8px;
-  font-weight: 700;
-  color: #c08aa8;
-  width: 12px;
+.live-title {
   text-align: center;
+  color: #ff83db;
+  font-family: 'Orbitron', 'DosGothic', monospace;
+  font-size: 25px;
+  letter-spacing: 1.6px;
+  text-shadow:
+    0 0 7px rgba(255, 118, 210, 0.75),
+    0 0 18px rgba(237, 99, 202, 0.55);
 }
 
-.clk-hand {
+.live-board {
+  position: relative;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 128, 226, 0.88);
+  background-color: #09090c;
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(44, 44, 49, 0.95) 0 1.3px, rgba(10, 10, 14, 0) 1.4px),
+    radial-gradient(circle at 50% 50%, rgba(11, 11, 13, 0.9) 0 0.55px, rgba(0, 0, 0, 0) 0.7px),
+    linear-gradient(180deg, rgba(26, 25, 30, 0.98), rgba(10, 10, 14, 0.98));
+  background-size: 6px 6px, 6px 6px, 100% 100%;
+  background-position: 0 0, 3px 3px, 0 0;
+  box-shadow:
+    0 0 12px rgba(255, 128, 222, 0.44),
+    inset 0 0 18px rgba(255, 96, 196, 0.2),
+    inset 0 -8px 20px rgba(0, 0, 0, 0.5);
+  padding: 14px 10px 11px;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.live-board::before {
+  content: '';
   position: absolute;
-  bottom: 50%;
-  left: 50%;
-  transform-origin: 50% 100%;
-  border-radius: 2px;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 85% at 50% 5%, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0));
+  z-index: 1;
 }
 
-#hand-h {
-  width: 3.2px;
-  height: 18px;
-  background: #8e4a6e;
-  margin-left: -1.6px;
+.live-board::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.26;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.08) 0 1px,
+    rgba(0, 0, 0, 0) 1px 3px
+  );
+}
+
+.live-value {
+  position: relative;
   z-index: 3;
+  font-family: 'Orbitron', 'DosGothic', monospace;
+  font-weight: 700;
+  font-size: clamp(28px, 10vw, 36px);
+  line-height: 1;
+  letter-spacing: 1px;
+  color: transparent;
+  background-image:
+    radial-gradient(circle, rgba(255, 146, 233, 0.98) 0 44%, rgba(255, 110, 220, 0.24) 54%, rgba(255, 110, 220, 0) 66%),
+    linear-gradient(180deg, #ffd4f6 0%, #ff92e9 55%, #b55fa6 100%);
+  background-size: 6px 6px, 100% 100%;
+  background-position: 0 0, 0 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow:
+    0 0 7px rgba(255, 156, 239, 0.5),
+    0 0 18px rgba(245, 121, 223, 0.4),
+    0 0 28px rgba(255, 119, 233, 0.2);
+  transition: transform 0.25s ease, filter 0.25s ease, opacity 0.25s ease, text-shadow 0.25s ease;
+  will-change: transform, filter, opacity;
 }
-#hand-m {
-  width: 2.2px;
-  height: 24px;
-  background: #b06a8e;
-  margin-left: -1.1px;
-  z-index: 4;
-}
-#hand-s {
-  width: 1px;
-  height: 27px;
-  background: #ff7eb0;
-  margin-left: -0.5px;
-  z-index: 5;
+
+@media (max-width: 420px) {
+  #top-hud {
+    column-gap: 10px;
+  }
+
+  .hud-box {
+    padding: 11px 9px;
+  }
+
+  .live-title {
+    font-size: 24px;
+  }
+
+  .status-track {
+    height: 14px;
+  }
 }
 
 /* --- Sync Toggle --- */
@@ -299,30 +409,79 @@ body {
 .tog.on .knob { left: 18px; }
 
 /* ===== Character ===== */
-#character {
+#character-container {
   position: absolute;
-  bottom: 16%;  /* ← 캐릭터 위치 조정: 이 값을 변경하세요 */
+  bottom: 14%;  /* ← 캐릭터 위치 조정: 이 값을 변경하세요 */
   left: 50%;
   transform: translateX(-50%) scaleY(1);
   transform-origin: bottom center;
-  height: 65%;
+  height: 70%;
+  aspect-ratio: 1 / 1;
   z-index: 5;
   pointer-events: none;
   filter: drop-shadow(0 4px 14px rgba(160,80,130,0.25));
   animation: characterBreath 4.6s ease-in-out infinite;
   transition: filter 0.8s ease;
 }
-#character.sunset {
-  filter: brightness(0.9) sepia(0.5) hue-rotate(-20deg) saturate(1.5);
+
+#character-container img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
-#character.night {
-  filter: brightness(0.8) sepia(0.4) hue-rotate(-5deg) drop-shadow(0 4px 14px rgba(160,80,130,0.25));
+
+#layer-hair-back {
+  z-index: 10;
+  transform-origin: 50% 15%;
+  will-change: transform;
+  animation:
+    hair-rotate  4.8s ease-in-out infinite alternate,
+    hair-skew    6.4s ease-in-out infinite alternate,
+    hair-scale   7.2s ease-in-out infinite alternate;
+}
+
+#layer-body {
+  z-index: 20;
+}
+
+#layer-face {
+  z-index: 30;
+}
+
+#layer-clothes {
+  z-index: 40;
+}
+#character-container.day {
+  /* filter: drop-shadow(0 4px 14px rgba(160,80,130,0.25)); */
+}
+#character-container.sunset {
+  filter: brightness(0.9) sepia(0.3) hue-rotate(-20deg) saturate(1.5) url(#hard-light-overlay-sunset);
+}
+#character-container.night {
+  filter: brightness(0.9) sepia(0.1) hue-rotate(-5deg) saturate(1.2) url(#hard-light-overlay-night);
 }
 
 @keyframes characterBreath {
   0% { transform: translateX(-50%) scaleY(1); }
   50% { transform: translateX(-50%) scaleY(1.01); }
   100% { transform: translateX(-50%) scaleY(1); }
+}
+
+/* 각 속성별 독립 사인파: 3키프레임 + alternate → 완벽한 사인파 */
+@keyframes hair-rotate {
+  0%   { rotate: -1deg; }
+  100% { rotate:  1deg; }
+}
+@keyframes hair-skew {
+  0%   { transform: skewX(-0.4deg); }
+  100% { transform: skewX(0.4deg);  }
+}
+@keyframes hair-scale {
+  0%   { scale: 1 1; }
+  100% { scale: 1.004 1; }
 }
 /* ===== 캐릭터 그림자 ===== */
 .chara-shadow {
@@ -331,8 +490,8 @@ body {
   height: 70px;
   position: absolute;
   z-index: 4;
-    bottom: 13.5%;
-    left: 51%;
+    bottom: 12.5%;
+    left: 50%;
   background: rgba(63, 23, 23, 0.4);
   mix-blend-mode: multiply;
   clip-path: ellipse(50% 50%);
@@ -394,18 +553,17 @@ body {
 #btn-ad:active { transform: scale(0.94); }
 
 /* Main 4 Buttons */
-#main-btns {
+.main-btns {
   display: flex;
   flex-direction: column;
   gap: 8px;
   flex: 1;
   align-items: end;
 }
-#main-btns.gacha {
-  flex-direction: row;
-  gap: 12px;
+.main-btns.gacha {
+  align-items: start;
 }
-#main-btns.menu {
+.main-btns.menu {
   flex-direction: column;
   gap: 24px;
 }
@@ -450,34 +608,135 @@ body {
   0%,100% { transform: translateY(0); }
   50% { transform: translateY(-3px); }
 }
-
+#btn-live {  
+  width: 128px;
+  height: 64px;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 16px;
+  background-color: #09090c;
+  background-size: 6px 6px, 6px 6px, 100% 100%;
+  background-position: 0 0, 3px 3px, 0 0;
+  box-shadow:
+    inset 0 0 5px rgba(0, 0, 0, 0.6),
+    0 0 5px rgba(255, 255, 255, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+  z-index: 1;
+  font-family: 'Orbitron', 'DosGothic', monospace;}
+#btn-live.is-live {
+  border: 2px solid rgba(255, 0, 0, 0.6);
+  box-shadow:
+      inset 0 0 5px rgba(0, 0, 0, 0.6),
+      0 0 5px rgba(255, 0, 0, 0.35);
+}
+#btn-live::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.09) 0 1px,
+    rgba(0, 0, 0, 0) 1px 3px
+  );
+  opacity: 0.22;
+  pointer-events: none;
+  z-index: 1;
+}
+#btn-live::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 80% at 50% 0%, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0));
+  pointer-events: none;
+  z-index: 2;
+}
+#btn-live .led-text {
+  position: relative;
+  z-index: 3;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  line-height: 1;
+  color: transparent;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 1) 0 44%, rgba(255, 255, 255, 0.28) 54%, rgba(255, 255, 255, 0) 66%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.7) 58%, rgba(255, 255, 255, 0.7) 100%);
+  background-size: 6px 6px, 100% 100%;
+  background-position: 0 0, 0 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow:
+    0 0 4px rgba(255, 255, 255, 0.3),
+    0 0 10px rgba(255, 255, 255, 0.3),
+    0 0 18px rgba(255, 255, 255, 0.3);
+}
+#btn-live.is-live .led-text {
+  background-image:
+    radial-gradient(circle, rgba(255, 28, 28, 1) 0 44%, rgba(255, 0, 0, 0.28) 54%, rgba(255, 0, 0, 0) 66%),
+    linear-gradient(180deg, #ff6f6f 0%, #ff0000 58%, #a70000 100%);
+    text-shadow:
+    0 0 4px rgba(255, 52, 52, 0.86),
+    0 0 10px rgba(255, 0, 0, 0.72),
+    0 0 18px rgba(255, 0, 0, 0.5);
+}
 .mb {
   width: 64px;
   height: 64px;
   aspect-ratio: 1;
-  border: 2px solid #553a42;
+  border: none;
   border-radius: 100px;
-  background: #fff6fc;
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 2px;
   cursor: pointer;
+  position: relative;
   -webkit-tap-highlight-color: transparent;
+  z-index: 1;
+}
+.mb::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 100px;
+  padding: 2px;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgb(159,214,229), rgb(223,152,207));
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  mask:
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  box-shadow: 0 0 8px 2px rgba(159,214,229,0.18), 0 0 12px 4px rgba(223,152,207,0.16);
+  filter: blur(1.2px);
 }
 .mb:active { box-shadow: 0 1px 4px rgba(200,150,180,0.2); }
 .mb .ic {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
 }
 #btn-gacha .ic { background-image: url('assets/icon_gacha.png'); }
-#btn-gift .ic  { background-image: url('assets/icon_gift.png'); }
+#btn-live .ic { background-image: none; }
+#btn-support .ic  { background-image: url('assets/icon_food.png'); }
 #btn-closet .ic  { background-image: url('assets/icon_closet.png'); }
-#btn-touch .ic { background-image: url('assets/icon_touch.png'); }
+#btn-touch .ic { background-image: url('assets/icon_commu.png'); }
 .mb .la { font-size: 8px; font-weight: 700; color: #a06a90; letter-spacing: 0.5px; }
 .mb .su { 
   position: absolute;
@@ -486,14 +745,14 @@ body {
   color: #fff; 
   font-family: 'GyeonggiMillenniumTitle', sans-serif; 
   text-shadow: 
-    -2px -2px 0 #472f36,  
-     2px -2px 0 #472f36,
-    -2px  2px 0 #472f36,
-     2px  2px 0 #472f36,
-    -2px  0   0 #472f36,
-     2px  0   0 #472f36,
-     0   -2px 0 #472f36,
-     0    2px 0 #472f36;
+    -2px -2px 0 rgba(0, 0, 0, 0.5),  
+     2px -2px 0 rgba(0, 0, 0, 0.5),
+    -2px  2px 0 rgba(0, 0, 0, 0.5),
+     2px  2px 0 rgba(0, 0, 0, 0.5),
+    -2px  0   0 rgba(0, 0, 0, 0.5),
+     2px  0   0 rgba(0, 0, 0, 0.5),
+     0   -2px 0 rgba(0, 0, 0, 0.5),
+     0    2px 0 rgba(0, 0, 0, 0.5);
 
 }
 
@@ -614,19 +873,17 @@ body {
 /* 배경+캐릭터 줌인 */
 #top-area {
   transition: transform 0.5s ease;
-  transform-origin: 50% 50%; /* Y값을 키우면 포커스가 아래로 내려감 */
+  transform-origin: 50% 70%; /* Y값을 키우면 포커스가 아래로 내려감 */
 }
 #game-container.touch-mode #top-area {
-  transform: scale(1.4);
+  transform: scale(1.3);
 }
 
-/* 게이지, 시계 페이드아웃 */
-#gauges,
-#top-right {
+/* HUD 페이드아웃 */
+#top-hud {
   transition: opacity 0.4s ease;
 }
-#game-container.touch-mode #gauges,
-#game-container.touch-mode #top-right {
+#game-container.touch-mode #top-hud {
   opacity: 0;
   pointer-events: none;
 }
@@ -666,7 +923,7 @@ body {
      0    2px 0 #472f36;
 }
 #game-container.touch-mode #btn-touch .ic {
-  background-image: url('assets/icon_touch.png');
+  background-image: url('assets/icon_exit.png');
 }
 
 /* 반짝임 이펙트 */
@@ -736,6 +993,263 @@ body {
     transform: translate(calc(var(--dx) * 3), calc(var(--dy) * 3 - 16px)) scale(0.3);
   }
 }
+
+.support-backdrop {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 10, 30, 0.6);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.support-backdrop.show { display: flex; }
+
+.support-modal {
+  position: relative;
+  width: 90%;
+  max-width: 380px;
+  max-height: 80vh;
+  background: linear-gradient(160deg, #1a1528, #0f0d1a);
+  border: 1.5px solid rgba(200, 140, 255, 0.45);
+  border-radius: 18px;
+  padding: 18px 14px 14px;
+  box-shadow:
+    0 0 24px rgba(180, 100, 240, 0.25),
+    inset 0 0 12px rgba(140, 80, 200, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.support-modal-title {
+  text-align: center;
+  font-family: 'DosGothic', 'Noto Sans KR', sans-serif;
+  font-size: 16px;
+  color: #e0c0ff;
+  letter-spacing: 1px;
+  text-shadow: 0 0 6px rgba(200, 140, 255, 0.5);
+}
+
+.support-section-label {
+  font-family: 'DosGothic', 'Noto Sans KR', sans-serif;
+  font-size: 11px;
+  color: #c8a0e8;
+  letter-spacing: 0.5px;
+  padding: 2px 6px;
+  border-bottom: 1px solid rgba(200, 140, 255, 0.2);
+}
+
+.support-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  overflow-y: auto;
+}
+
+.support-slot {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  border: 1.5px solid rgba(180, 140, 220, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+}
+.support-slot:active { transform: scale(0.93); }
+.support-slot.grade-common {
+  background: linear-gradient(135deg, rgba(180,180,190,0.2), rgba(140,140,155,0.1));
+}
+.support-slot.grade-rare {
+  background: linear-gradient(135deg, rgba(100,160,255,0.25), rgba(80,130,220,0.1));
+  border-color: rgba(100,160,255,0.5);
+}
+.support-slot.grade-legendary {
+  background: linear-gradient(135deg, rgba(255,210,80,0.3), rgba(220,170,50,0.12));
+  border-color: rgba(255,210,80,0.6);
+  box-shadow: 0 0 8px rgba(255,200,60,0.2);
+}
+.support-slot.empty {
+  filter: grayscale(100%);
+  opacity: 0.45;
+  pointer-events: none;
+  cursor: default;
+}
+
+.support-slot-icon {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.support-slot-qty {
+  position: absolute;
+  bottom: 2px;
+  right: 4px;
+  font-family: 'Orbitron', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  line-height: 1;
+}
+
+.support-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  color: #d0b8e8;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  z-index: 5;
+}
+.support-close:hover { background: rgba(255,255,255,0.2); }
+
+/* ===== Detail (2nd) Modal ===== */
+.detail-backdrop {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 5, 20, 0.55);
+  z-index: 300;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+.detail-backdrop.show { display: flex; }
+
+.detail-modal {
+  position: relative;
+  width: 78%;
+  max-width: 300px;
+  background: linear-gradient(160deg, #1e1830, #14101f);
+  border: 1.5px solid rgba(220, 160, 255, 0.5);
+  border-radius: 16px;
+  padding: 20px 18px 16px;
+  box-shadow: 0 0 20px rgba(200, 120, 255, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.detail-icon-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+}
+.detail-icon-wrap.grade-common { background: rgba(180,180,190,0.2); }
+.detail-icon-wrap.grade-rare { background: rgba(100,160,255,0.2); }
+.detail-icon-wrap.grade-legendary { background: rgba(255,210,80,0.25); }
+
+.detail-icon-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.detail-name {
+  font-family: 'DosGothic', 'Noto Sans KR', sans-serif;
+  font-size: 15px;
+  color: #f0d8ff;
+  text-align: center;
+  text-shadow: 0 0 4px rgba(200,140,255,0.4);
+}
+
+.detail-desc {
+  font-size: 12px;
+  color: #b8a0cc;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.detail-stats {
+  display: flex;
+  gap: 16px;
+  font-family: 'DosGothic', monospace;
+  font-size: 12px;
+}
+.detail-stats span {
+  color: #ffcc66;
+  text-shadow: 0 0 4px rgba(255,200,60,0.3);
+}
+
+.detail-confirm-text {
+  font-size: 13px;
+  color: #d0b8e8;
+  text-align: center;
+}
+
+.detail-btns {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+.detail-btns button {
+  flex: 1;
+  padding: 10px 0;
+  border-radius: 12px;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.detail-btns button:active { transform: scale(0.95); }
+.detail-btn-cancel {
+  background: rgba(200,180,220,0.15);
+  color: #b8a0cc;
+  border: 1px solid rgba(200,180,220,0.3) !important;
+}
+.detail-btn-ok {
+  background: linear-gradient(135deg, #b06cff, #8a3fdf);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(160,80,240,0.35);
+}
+
+.detail-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  color: #d0b8e8;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  z-index: 5;
+}
 </style>
 </head>
 <body>
@@ -744,38 +1258,74 @@ body {
 
   <!-- ====== TOP (70%) ====== -->
   <div id="top-area">
-    <img class="bg-layer" id="bg-a" src="assets/day.png" alt="배경 A">
-    <img class="bg-layer" id="bg-b" src="assets/day.png" alt="배경 B">
-
-    <!-- Gauges -->
-    <div id="gauges">
-      <div class="gauge-row">
-        <div class="gauge-icon">❤️</div>
-        <div class="gauge-bar-outer"><div class="gauge-bar-inner heart" id="g-heart"></div></div>
+    <img class="bg-layer" id="bg-a" src="assets/bg_day.webp" alt="낮 배경" draggable="false">
+    <img class="bg-layer" id="bg-b" src="assets/bg_day.webp" alt="낮 배경" draggable="false">
+    <div id="top-hud" aria-label="상단 상태 HUD">
+      <div class="hud-box left-box">
+        <div class="hud-left">
+          <div class="status-row">
+            <div class="status-icon-slot manager-level" aria-hidden="true">5</div>
+            <div class="status-label-gauge">
+              <div class="status-heart-label">Manager<br>Level</div>
+            </div>
+          </div>
+          <div class="status-row">
+            <div class="status-icon-slot tension" aria-hidden="true"></div>
+            <div class="status-label-gauge">
+              <div class="status-ability-label">TENSION</div>
+              <div class="status-track"><div class="status-fill life" style="--fill: 72%;"></div></div>
+            </div>
+          </div>
+          <div class="status-row">
+            <div class="status-icon-slot stamina" aria-hidden="true"></div>
+            <div class="status-label-gauge">
+              <div class="status-ability-label">STAMINA</div>            
+              <div class="status-track"><div class="status-fill sub" style="--fill: 88%;"></div></div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="gauge-row">
-        <div class="gauge-icon">🍚</div>
-        <div class="gauge-bar-outer"><div class="gauge-bar-inner hunger" id="g-hunger"></div></div>
-      </div>
-      <div class="gauge-row">
-        <div class="gauge-icon">😴</div>
-        <div class="gauge-bar-outer"><div class="gauge-bar-inner fatigue" id="g-fatigue"></div></div>
-      </div>
-    </div>
-
-    <!-- Top Right -->
-    <div id="top-right">
-      <!-- Analog Clock -->
-      <div id="clock-wrap">
-        <div class="clk-center"></div>
-        <div class="clk-hand" id="hand-h"></div>
-        <div class="clk-hand" id="hand-m"></div>
-        <div class="clk-hand" id="hand-s"></div>
+      <div class="hud-box right-box">
+        <div class="hud-right">
+          <div class="live-title">LIVE SUB</div>
+          <div class="live-board"><div class="live-value">1,234,567M</div></div>
+        </div>
       </div>
     </div>
 
     <!-- Character -->
-    <img id="character" src="assets/iveko-chan.png" alt="이베코쨩">
+    <div class="character-wrapper">
+      <div id="character-container" class="day" aria-label="이베코쨩" role="img">
+        <img id="layer-hair-back" src="assets/hair_back_default.png" alt="" draggable="false">
+        <img id="layer-body" src="assets/body_base.png" alt="" draggable="false">
+        <img id="layer-face" src="assets/face_default.png" alt="" draggable="false">
+        <img id="layer-clothes" src="assets/clothes_default.png" alt="" draggable="false">
+      </div>
+    </div>
+    <!-- SVG 하드라이트 필터 정의: 원하는 색상으로 flood-color 수정 가능 -->
+    <svg width="0" height="0" style="position:absolute">
+      <!-- sunset용: 단색 하드라이트 -->
+      <filter id="hard-light-overlay-sunset">
+        <feFlood flood-color="rgb(255 141 31 / 10%)" result="overlayColor"/>
+        <feBlend mode="hard-light" in="overlayColor" in2="SourceGraphic" result="blended"/>
+        <feComposite operator="in" in="blended" in2="SourceAlpha"/>
+      </filter>
+      <!-- night용: gradient 하드라이트 -->
+      <linearGradient id="night-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="rgb(32 49 144 / 50%)" stop-opacity="0.18"/>
+        <stop offset="100%" stop-color="rgb(240 115 230 / 50%)" stop-opacity="0.22"/>
+      </linearGradient>
+      <filter id="hard-light-overlay-night" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox">
+        <!-- feImage가 linearGradient ID를 직접 참조하면 무시되는 브라우저가 있어 data URI로 고정 -->
+        <feImage
+          x="0" y="0" width="1" height="1" preserveAspectRatio="none"
+          href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0%25' stop-color='rgb(32%2049%20144)' stop-opacity='0.20'/%3E%3Cstop offset='100%25' stop-color='rgb(240%20115%20230)' stop-opacity='0.28'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='0' y='0' width='1' height='1' fill='url(%23g)'/%3E%3C/svg%3E"
+          xlink:href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0%25' stop-color='rgb(32%2049%20144)' stop-opacity='0.20'/%3E%3Cstop offset='100%25' stop-color='rgb(240%20115%20230)' stop-opacity='0.28'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='0' y='0' width='1' height='1' fill='url(%23g)'/%3E%3C/svg%3E"
+          result="gradientImg"/>
+        <feBlend mode="hard-light" in="gradientImg" in2="SourceGraphic" result="blended"/>
+        <feComposite operator="in" in="blended" in2="SourceAlpha"/>
+      </filter>
+    </svg>
     <div class="chara-shadow"></div>
   </div>
 
@@ -789,32 +1339,43 @@ body {
     </div> -->
 
     <!-- 4 Main Buttons -->
-    <div id="main-btns" class="gacha hide-on-touch">
+    <div class="main-btns gacha hide-on-touch">
+      <div class="earnings">
+        <span class="ic">운영 자금</span>
+        <span class="earnings-value">0</span>
+      </div>
       <div class="mbw">
         <span class="bub">일일 뽑기 가능!</span>
         <button class="mb" id="btn-gacha">
           <span class="ic"></span>
-          <span class="su">뽑기</span>
+          <span class="su">영업</span>
         </button>
       </div>
     </div>
-    <div id="main-btns" class="menu">
+    <div class="main-btns live hide-on-touch">
       <div class="mbw hide-on-touch">
-        <button class="mb" id="btn-gift">
+        <button id="btn-live">
+          <span class="led-text">▶LIVE</span>
+        </button>
+      </div>
+    </div>
+    <div class="main-btns menu">
+      <div class="mbw hide-on-touch">
+        <button class="mb" id="btn-support">
           <span class="ic"></span>
-          <span class="su">선물</span>
+          <span class="su">서포트</span>
         </button>
       </div>
       <div class="mbw hide-on-touch">
         <button class="mb" id="btn-closet">
           <span class="ic"></span>
-          <span class="su">옷장</span>
+          <span class="su">세팅</span>
         </button>
       </div>
       <div class="mbw">
         <button class="mb" id="btn-touch">
           <span class="ic"></span>
-          <span class="su">터치</span>
+          <span class="su">소통</span>
           <span class="su-exit">나가기</span>
         </button>
       </div>
@@ -851,6 +1412,39 @@ body {
     </div>
   </div>
 
+  <!-- ====== SUPPORT MODAL (1차) ====== -->
+  <div class="support-backdrop" id="support-backdrop">
+    <div class="support-modal">
+      <button class="support-close" id="support-close">&times;</button>
+      <div class="support-modal-title">SUPPORT</div>
+      <div class="support-section-label">MEAL</div>
+      <div class="support-grid" id="support-grid-meal"></div>
+      <div class="support-section-label">DESSERT</div>
+      <div class="support-grid" id="support-grid-dessert"></div>
+    </div>
+  </div>
+
+  <!-- ====== DETAIL MODAL (2차) ====== -->
+  <div class="detail-backdrop" id="detail-backdrop">
+    <div class="detail-modal">
+      <button class="detail-close" id="detail-close">&times;</button>
+      <div class="detail-icon-wrap" id="detail-icon-wrap">
+        <img id="detail-icon" src="" alt="">
+      </div>
+      <div class="detail-name" id="detail-name"></div>
+      <div class="detail-desc" id="detail-desc"></div>
+      <div class="detail-stats">
+        <span>STA +<span id="detail-sta">0</span></span>
+        <span>TEN +<span id="detail-ten">0</span></span>
+      </div>
+      <div class="detail-confirm-text">아이템을 사용하시겠습니까?</div>
+      <div class="detail-btns">
+        <button class="detail-btn-cancel" id="detail-cancel">취소</button>
+        <button class="detail-btn-ok" id="detail-ok">확인</button>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -868,10 +1462,10 @@ let manualBase   = null;   // Date.now() at the moment manual time was set
 // ===== DOM =====
 const $bgA     = document.getElementById('bg-a');
 const $bgB     = document.getElementById('bg-b');
-const $handH   = document.getElementById('hand-h');
-const $handM   = document.getElementById('hand-m');
-const $handS   = document.getElementById('hand-s');
-const $clock   = document.getElementById('clock-wrap');
+// const $handH   = document.getElementById('hand-h');
+// const $handM   = document.getElementById('hand-m');
+// const $handS   = document.getElementById('hand-s');
+// const $clock   = document.getElementById('clock-wrap');
 const $tog     = document.getElementById('tog-sync');
 const $mo      = document.getElementById('mo');
 const $slH     = document.getElementById('sl-h');
@@ -884,32 +1478,32 @@ const $mOk     = document.getElementById('m-ok');
 const $mNo     = document.getElementById('m-no');
 
 // ===== 시계 눈금 & 숫자 생성 =====
-(function buildClock() {
-  var wrap = document.getElementById('clock-wrap');
-  var R = 37; // clock radius for marks
-  // Hour marks
-  for (var i = 0; i < 12; i++) {
-    var mk = document.createElement('div');
-    mk.className = 'clk-mark' + (i % 3 === 0 ? ' big' : '');
-    mk.style.transform = 'rotate(' + (i * 30) + 'deg)';
-    wrap.appendChild(mk);
-  }
-  // Numbers 12, 3, 6, 9
-  var nums = [
-    { n: '12', x: 31, y: 7 },
-    { n: '3',  x: 56, y: 31 },
-    { n: '6',  x: 33, y: 55 },
-    { n: '9',  x: 8,  y: 31 }
-  ];
-  nums.forEach(function(o) {
-    var el = document.createElement('div');
-    el.className = 'clk-num';
-    el.textContent = o.n;
-    el.style.left = o.x + 'px';
-    el.style.top = o.y + 'px';
-    wrap.appendChild(el);
-  });
-})();
+// (function buildClock() {
+//   var wrap = document.getElementById('clock-wrap');
+//   var R = 37; // clock radius for marks
+//   // Hour marks
+//   for (var i = 0; i < 12; i++) {
+//     var mk = document.createElement('div');
+//     mk.className = 'clk-mark' + (i % 3 === 0 ? ' big' : '');
+//     mk.style.transform = 'rotate(' + (i * 30) + 'deg)';
+//     wrap.appendChild(mk);
+//   }
+//   // Numbers 12, 3, 6, 9
+//   var nums = [
+//     { n: '12', x: 31, y: 7 },
+//     { n: '3',  x: 56, y: 31 },
+//     { n: '6',  x: 33, y: 55 },
+//     { n: '9',  x: 8,  y: 31 }
+//   ];
+//   nums.forEach(function(o) {
+//     var el = document.createElement('div');
+//     el.className = 'clk-num';
+//     el.textContent = o.n;
+//     el.style.left = o.x + 'px';
+//     el.style.top = o.y + 'px';
+//     wrap.appendChild(el);
+//   });
+// })();
 
 // ===== 게임 시간 계산 =====
 function getTime() {
@@ -931,14 +1525,14 @@ function getTime() {
 }
 
 // ===== 시계 바늘 업데이트 =====
-function setClock(h, m, s) {
-  var hd = (h % 12) * 30 + m * 0.5 + s * (0.5 / 60);
-  var md = m * 6 + s * 0.1;
-  var sd = s * 6;
-  $handH.style.transform = 'rotate(' + hd + 'deg)';
-  $handM.style.transform = 'rotate(' + md + 'deg)';
-  $handS.style.transform = 'rotate(' + sd + 'deg)';
-}
+// function setClock(h, m, s) {
+//   var hd = (h % 12) * 30 + m * 0.5 + s * (0.5 / 60);
+//   var md = m * 6 + s * 0.1;
+//   var sd = s * 6;
+//   $handH.style.transform = 'rotate(' + hd + 'deg)';
+//   $handM.style.transform = 'rotate(' + md + 'deg)';
+//   $handS.style.transform = 'rotate(' + sd + 'deg)';
+// }
 
 // ===== 배경 업데이트 =====
 var lastBgState = '';
@@ -946,14 +1540,14 @@ var activeBgLayer = 'a';
 var bgFadeTimer = null;
 
 function applyBgState(state, useFade) {
-  var nextSrc = 'assets/day.png';
+  var nextSrc = 'assets/bg_day.webp';
   var nextFilter = 'none';
 
   if (state === 'sunset') {
-    nextSrc = 'assets/day.png';
-    nextFilter = 'brightness(0.9) sepia(0.5) hue-rotate(-20deg) saturate(1.5)';
+    nextSrc = 'assets/bg_sunset.webp';
+    nextFilter = 'none';
   } else if (state === 'night') {
-    nextSrc = 'assets/night.png';
+    nextSrc = 'assets/bg_night.webp';
     nextFilter = 'none';
   }
 
@@ -965,21 +1559,27 @@ function applyBgState(state, useFade) {
     bgFadeTimer = null;
   }
 
+
+  function withBlur(filter) {
+    return 'blur(1px)' + (filter && filter !== 'none' ? ' ' + filter : '');
+  }
+
   if (!useFade) {
     visibleLayer.src = nextSrc;
-    visibleLayer.style.filter = nextFilter;
+    visibleLayer.style.filter = withBlur(nextFilter);
     visibleLayer.style.opacity = '1';
     visibleLayer.style.zIndex = '1';
 
     hiddenLayer.src = nextSrc;
-    hiddenLayer.style.filter = nextFilter;
+    hiddenLayer.style.filter = withBlur(nextFilter);
     hiddenLayer.style.opacity = '0';
     hiddenLayer.style.zIndex = '0';
     return;
   }
 
+
   hiddenLayer.src = nextSrc;
-  hiddenLayer.style.filter = nextFilter;
+  hiddenLayer.style.filter = withBlur(nextFilter);
   hiddenLayer.style.opacity = '0';
   hiddenLayer.style.zIndex = '2';
   visibleLayer.style.zIndex = '1';
@@ -1007,7 +1607,7 @@ function setBg(h, useFade) {
     state = 'night';
   }
   // 캐릭터 day/night/sunset 클래스 적용
-  var $char = document.getElementById('character');
+  var $char = document.getElementById('character-container');
   $char.classList.remove('day', 'night', 'sunset');
   $char.classList.add(state);
 
@@ -1019,7 +1619,7 @@ function setBg(h, useFade) {
 // ===== 메인 루프 =====
 function tick() {
   var t = getTime();
-  setClock(t.h, t.m, t.s);
+  // setClock(t.h, t.m, t.s);
   setBg(t.h, false);
 }
 
@@ -1032,7 +1632,7 @@ function syncToRealtimeNow() {
   manualBase = null;
   $tog.classList.add('on');
   lastBgState = '';
-  setClock(manualHour, manualMinute, manualSecond);
+  // setClock(manualHour, manualMinute, manualSecond);
   setBg(manualHour, false);
 }
 
@@ -1054,15 +1654,15 @@ $tog.addEventListener('click', function() {
 });
 
 // ===== 시간 변경 모달 =====
-$clock.addEventListener('click', function() {
-  var t = getTime();
-  $slH.value = t.h;
-  $slM.value = t.m;
-  modalSync = isSyncMode;
-  $tog.classList.toggle('on', modalSync);
-  refreshModal();
-  $mo.classList.add('show');
-});
+// $clock.addEventListener('click', function() {
+//   var t = getTime();
+//   $slH.value = t.h;
+//   $slM.value = t.m;
+//   modalSync = isSyncMode;
+//   $tog.classList.toggle('on', modalSync);
+//   refreshModal();
+//   $mo.classList.add('show');
+// });
 
 function pad2(n) { return n.toString().padStart(2, '0'); }
 
@@ -1110,7 +1710,7 @@ $mOk.addEventListener('click', function() {
   $mo.classList.remove('show');
   lastBgState = '';
   var t = getTime();
-  setClock(t.h, t.m, t.s);
+  // setClock(t.h, t.m, t.s);
   setBg(t.h, true);
 });
 
@@ -1135,7 +1735,7 @@ document.getElementById('btn-touch').addEventListener('click', function() {
 // 반짝임 이펙트 (전체 화면)
 $container.addEventListener('click', function(e) {
   // 버튼, 모달 등 인터랙티브 요소 클릭 시 이펙트 제외
-  if (e.target.closest('.mb, .mbw, #mo, #clock-wrap, #gauges')) return;
+  if (e.target.closest('.mb, .mbw, #mo, #top-hud')) return;
 
   var rect = $container.getBoundingClientRect();
   var x = e.clientX - rect.left;
@@ -1172,6 +1772,331 @@ $container.addEventListener('click', function(e) {
     })(p);
   }
 });
+
+// =========================================================
+//  공유 saveData — 엔진 & 케어 시스템 공용
+// =========================================================
+var saveData = {
+  streamerStatus: {
+    isLive: false,
+    tension: 100,      // 0 ~ 100
+    stamina: 100,      // 0 ~ 100
+    subscribers: 0,    // 누적 구독자 수
+    earnings: 0        // 운영 자금
+  },
+  inventory: {
+    consumables: [
+      { id: 'itm_food_01', quantity: 12 },
+      { id: 'itm_food_02', quantity: 5 },
+      { id: 'itm_food_03', quantity: 3 },
+      { id: 'itm_food_04', quantity: 2 },
+      { id: 'itm_food_05', quantity: 1 },
+      { id: 'itm_food_06', quantity: 0 },
+      { id: 'itm_food_07', quantity: 1 },
+      { id: 'itm_food_08', quantity: 0 },
+      { id: 'itm_food_09', quantity: 0 },
+      { id: 'itm_food_10', quantity: 0 },
+      { id: 'itm_dessert_01', quantity: 3 },
+      { id: 'itm_dessert_02', quantity: 8 },
+      { id: 'itm_dessert_03', quantity: 4 },
+      { id: 'itm_dessert_04', quantity: 2 },
+      { id: 'itm_dessert_05', quantity: 0 },
+      { id: 'itm_dessert_06', quantity: 1 },
+      { id: 'itm_dessert_07', quantity: 0 },
+      { id: 'itm_dessert_08', quantity: 1 },
+      { id: 'itm_dessert_09', quantity: 0 },
+      { id: 'itm_dessert_10', quantity: 0 }
+    ]
+  }
+};
+
+// =========================================================
+//  아이템 마스터 데이터 (ItemDatabase 인라인)
+// =========================================================
+var masterConsumables = [
+  { id:'itm_food_01', name:'매니저 샌드위치', description:'매니저가 직접 싼 소화 잘 되는 샌드위치.', type:'MEAL', staminaGain:30, tensionGain:10, grade:'COMMON' },
+  { id:'itm_food_02', name:'편의점 삼각김밥', description:'가장 기본적이고 든든한 한 끼.', type:'MEAL', staminaGain:20, tensionGain:5, grade:'COMMON' },
+  { id:'itm_food_03', name:'따끈한 컵라면', description:'방송 중에 먹기 좋은 짭짤한 라면.', type:'MEAL', staminaGain:25, tensionGain:15, grade:'COMMON' },
+  { id:'itm_food_04', name:'매콤 소고기 고추장 비빔밥', description:'힘이 불끈 솟는 매니저표 비빔밥.', type:'MEAL', staminaGain:45, tensionGain:20, grade:'RARE' },
+  { id:'itm_food_05', name:'치즈 폭탄 햄버거', description:'고칼로리는 언제나 정답입니다.', type:'MEAL', staminaGain:55, tensionGain:25, grade:'RARE' },
+  { id:'itm_food_06', name:'야채 가득 도시락', description:'건강을 생각한 신선한 도시락.', type:'MEAL', staminaGain:40, tensionGain:10, grade:'RARE' },
+  { id:'itm_food_07', name:'육즙 가득 스테이크', description:'특별한 날을 위한 최고급 단백질.', type:'MEAL', staminaGain:75, tensionGain:40, grade:'LEGENDARY' },
+  { id:'itm_food_08', name:'특선 초밥 세트', description:'이베코짱이 가장 좋아하는 신선한 초밥.', type:'MEAL', staminaGain:65, tensionGain:50, grade:'LEGENDARY' },
+  { id:'itm_food_09', name:'원기 회복 장어 덮밥', description:'밤샘 방송도 거뜬하게 만드는 보양식.', type:'MEAL', staminaGain:85, tensionGain:20, grade:'LEGENDARY' },
+  { id:'itm_food_10', name:'럭셔리 전복죽', description:'위장에도 좋고 영양도 만점인 전복죽.', type:'MEAL', staminaGain:95, tensionGain:15, grade:'LEGENDARY' },
+  { id:'itm_dessert_01', name:'딸기 쇼트 케이크', description:'달콤한 딸기가 올라간 부드러운 케이크.', type:'DESSERT', staminaGain:5, tensionGain:150, grade:'RARE' },
+  { id:'itm_dessert_02', name:'색깔 마카롱', description:'한 입에 쏙 들어가는 달콤함.', type:'DESSERT', staminaGain:2, tensionGain:40, grade:'COMMON' },
+  { id:'itm_dessert_03', name:'초코 칩 쿠키', description:'우유와 함께 먹으면 텐션 업!', type:'DESSERT', staminaGain:3, tensionGain:60, grade:'COMMON' },
+  { id:'itm_dessert_04', name:'바닐라 아이스크림', description:'시원하고 달콤한 휴식 시간.', type:'DESSERT', staminaGain:5, tensionGain:70, grade:'COMMON' },
+  { id:'itm_dessert_05', name:'무지개 솜사탕', description:'입안에서 사르르 녹는 기적의 단맛.', type:'DESSERT', staminaGain:1, tensionGain:90, grade:'COMMON' },
+  { id:'itm_dessert_06', name:'폭신한 생크림 도넛', description:'당 충전이 필요할 땐 역시 도넛.', type:'DESSERT', staminaGain:8, tensionGain:120, grade:'RARE' },
+  { id:'itm_dessert_07', name:'계절 과일 파르페', description:'눈과 입이 모두 즐거운 화려한 디저트.', type:'DESSERT', staminaGain:10, tensionGain:180, grade:'RARE' },
+  { id:'itm_dessert_08', name:'진한 티라미수', description:'기운이 번쩍 나는 정통 티라미수.', type:'DESSERT', staminaGain:5, tensionGain:220, grade:'RARE' },
+  { id:'itm_dessert_09', name:'갤럭시 은하수 젤리', description:'보는 것만으로도 영감이 떠오르는 신비한 젤리.', type:'DESSERT', staminaGain:2, tensionGain:350, grade:'LEGENDARY' },
+  { id:'itm_dessert_10', name:'황금 벌집 크로플', description:'바삭함과 달콤함의 완벽한 조화.', type:'DESSERT', staminaGain:15, tensionGain:500, grade:'LEGENDARY' }
+];
+
+// =========================================================
+//  서포트 시스템 — 아이템 모달 & 사용 로직
+// =========================================================
+(function () {
+  var $supportBackdrop  = document.getElementById('support-backdrop');
+  var $supportClose     = document.getElementById('support-close');
+  var $gridMeal      = document.getElementById('support-grid-meal');
+  var $gridDessert   = document.getElementById('support-grid-dessert');
+  var $detailBackdrop = document.getElementById('detail-backdrop');
+  var $detailClose   = document.getElementById('detail-close');
+  var $detailIcon    = document.getElementById('detail-icon');
+  var $detailIconWrap = document.getElementById('detail-icon-wrap');
+  var $detailName    = document.getElementById('detail-name');
+  var $detailDesc    = document.getElementById('detail-desc');
+  var $detailSta     = document.getElementById('detail-sta');
+  var $detailTen     = document.getElementById('detail-ten');
+  var $detailCancel  = document.getElementById('detail-cancel');
+  var $detailOk      = document.getElementById('detail-ok');
+
+  var selectedItem = null; // 현재 선택된 아이템 마스터 데이터
+
+  function getQuantity(itemId) {
+    var entry = saveData.inventory.consumables.find(function (c) { return c.id === itemId; });
+    return entry ? entry.quantity : 0;
+  }
+
+  function setQuantity(itemId, delta) {
+    var entry = saveData.inventory.consumables.find(function (c) { return c.id === itemId; });
+    if (entry) {
+      entry.quantity = Math.max(0, entry.quantity + delta);
+    }
+  }
+
+  function buildSlot(item) {
+    var qty = getQuantity(item.id);
+    var slot = document.createElement('div');
+    slot.className = 'support-slot grade-' + item.grade.toLowerCase();
+    if (qty <= 0) slot.classList.add('empty');
+
+    var icon = document.createElement('img');
+    icon.className = 'support-slot-icon';
+    icon.src = 'assets/' + item.id + '.png';
+    icon.alt = item.name;
+    icon.draggable = false;
+    slot.appendChild(icon);
+
+    var qtyEl = document.createElement('div');
+    qtyEl.className = 'support-slot-qty';
+    qtyEl.textContent = 'x' + qty;
+    slot.appendChild(qtyEl);
+
+    slot.addEventListener('click', function () {
+      openDetail(item);
+    });
+
+    return slot;
+  }
+
+  function renderGrid() {
+    $gridMeal.innerHTML = '';
+    $gridDessert.innerHTML = '';
+    masterConsumables.forEach(function (item) {
+      var slot = buildSlot(item);
+      if (item.type === 'MEAL') {
+        $gridMeal.appendChild(slot);
+      } else {
+        $gridDessert.appendChild(slot);
+      }
+    });
+  }
+
+  // ── 1차 모달 열기/닫기 ──
+  function openSupport() {
+    renderGrid();
+    $supportBackdrop.classList.add('show');
+  }
+  function closeSupport() {
+    $supportBackdrop.classList.remove('show');
+    closeDetail();
+  }
+
+  document.getElementById('btn-support').addEventListener('click', function () {
+    openSupport();
+  });
+  $supportClose.addEventListener('click', closeSupport);
+  $supportBackdrop.addEventListener('click', function (e) {
+    if (e.target === $supportBackdrop) closeSupport();
+  });
+
+  // ── 2차 모달 열기/닫기 ──
+  function openDetail(item) {
+    selectedItem = item;
+    $detailIcon.src = 'assets/' + item.id + '.png';
+    $detailIcon.alt = item.name;
+    $detailIconWrap.className = 'detail-icon-wrap grade-' + item.grade.toLowerCase();
+    $detailName.textContent = item.name;
+    $detailDesc.textContent = item.description;
+    $detailSta.textContent = item.staminaGain;
+    $detailTen.textContent = item.tensionGain;
+    $detailBackdrop.classList.add('show');
+  }
+  function closeDetail() {
+    $detailBackdrop.classList.remove('show');
+    selectedItem = null;
+  }
+
+  $detailClose.addEventListener('click', closeDetail);
+  $detailCancel.addEventListener('click', closeDetail);
+  $detailBackdrop.addEventListener('click', function (e) {
+    if (e.target === $detailBackdrop) closeDetail();
+  });
+
+  // ── 아이템 사용 확인 ──
+  $detailOk.addEventListener('click', function () {
+    if (!selectedItem) return;
+    var qty = getQuantity(selectedItem.id);
+    if (qty <= 0) return;
+
+    var ss = saveData.streamerStatus;
+    ss.stamina = Math.min(100, ss.stamina + selectedItem.staminaGain);
+    ss.tension = Math.min(100, ss.tension + selectedItem.tensionGain);
+    setQuantity(selectedItem.id, -1);
+
+    closeDetail();
+    closeSupport();
+  });
+})();
+
+// =========================================================
+//  게이지 엔진 — Tension / Stamina 실시간 연동
+// =========================================================
+(function () {
+  // ── 증감 상수 (1 초 단위) ──
+  var TENSION_DECAY_PER_SEC  = 1 / 180; // LIVE ON : 3 분당 −1
+    var STAMINA_DECAY_ON_PER_SEC  = 1 / 180; // LIVE ON : 3분당 -1
+    var STAMINA_DECAY_OFF_PER_SEC = 1 / 540; // LIVE OFF: 9분당 -1
+  var TENSION_REGEN_PER_SEC  = 1 / 60;  // LIVE OFF : 1 분당 +1
+  var EARNINGS_HIGH_PER_SEC  = 3 / 180;   // 텐션 70~100
+  var EARNINGS_MID_PER_SEC   = 2 / 180;   // 텐션 30~70
+  var EARNINGS_LOW_PER_SEC   = 0.3 / 180; // 텐션 0~30
+  var SUBS_HIGH_PER_SEC      = 150 / 180; // 텐션 70~100
+  var SUBS_MID_PER_SEC       = 100 / 180; // 텐션 30~70
+  var SUBS_LOW_PER_SEC       = 30 / 180;  // 텐션 0~30
+  var TEST_TIME_SCALE        = 100;      // 테스트용 시간 배율: 10이면 10배속, 기본값은 1
+
+  // ── DOM 캐시 ──
+  var $tensionFill = document.querySelector('.status-fill.life');
+  var $staminaFill = document.querySelector('.status-fill.sub');
+  var $liveValue   = document.querySelector('.live-value');
+  var $earningsVal = document.querySelector('.earnings-value');
+  var $btnLive     = document.getElementById('btn-live');
+  var $ledText     = $btnLive ? $btnLive.querySelector('.led-text') : null;
+
+  // ── 클램프 헬퍼 ──
+  function clamp(v) {
+    return Math.min(100, Math.max(0, v));
+  }
+
+  function getTensionDecayMultiplier(stamina) {
+    if (stamina < 10) return 4;
+    if (stamina < 30) return 2;
+    if (stamina < 70) return 1.5;
+    return 1;
+  }
+
+  function formatNumber(value) {
+    var n = Math.max(0, value);
+
+    if (n <= 9999999) {
+      return Math.floor(n).toLocaleString('en-US');
+    }
+
+    var units = [
+      { div: 1e12, suffix: 'T' },
+      { div: 1e9, suffix: 'B' },
+      { div: 1e6, suffix: 'M' }
+    ];
+
+    for (var i = 0; i < units.length; i++) {
+      if (n >= units[i].div) {
+        var shortText = (n / units[i].div).toFixed(1).replace(/\.0$/, '');
+        return shortText + units[i].suffix;
+      }
+    }
+
+    return Math.floor(n).toLocaleString('en-US');
+  }
+
+  // ── UI 갱신 ──
+  function updateGaugeUI() {
+    if ($tensionFill) {
+      $tensionFill.style.setProperty('--fill', clamp(saveData.streamerStatus.tension) + '%');
+    }
+    if ($staminaFill) {
+      $staminaFill.style.setProperty('--fill', clamp(saveData.streamerStatus.stamina) + '%');
+    }
+    if ($liveValue) {
+      $liveValue.textContent = formatNumber(saveData.streamerStatus.subscribers);
+    }
+    if ($earningsVal) {
+      $earningsVal.textContent = formatNumber(saveData.streamerStatus.earnings);
+    }
+  }
+
+  // ── 1 초 틱 ──
+  function gaugeTick() {
+    var ss = saveData.streamerStatus;
+    var earningsPerSec = 0;
+    var subsPerSec = 0;
+
+    if (ss.isLive) {
+      // LIVE ON: 텐션 −, 스태미나 − (고속)
+      var tensionDecayMul = getTensionDecayMultiplier(ss.stamina);
+      ss.tension = clamp(ss.tension - TENSION_DECAY_PER_SEC * tensionDecayMul * TEST_TIME_SCALE);
+      ss.stamina = clamp(ss.stamina - STAMINA_DECAY_ON_PER_SEC * TEST_TIME_SCALE);
+
+      if (ss.tension >= 70) {
+        earningsPerSec = EARNINGS_HIGH_PER_SEC;
+        subsPerSec = SUBS_HIGH_PER_SEC;
+      } else if (ss.tension >= 30) {
+        earningsPerSec = EARNINGS_MID_PER_SEC;
+        subsPerSec = SUBS_MID_PER_SEC;
+      } else {
+        earningsPerSec = EARNINGS_LOW_PER_SEC;
+        subsPerSec = SUBS_LOW_PER_SEC;
+      }
+
+      ss.earnings += earningsPerSec * TEST_TIME_SCALE;
+      ss.subscribers += subsPerSec * TEST_TIME_SCALE;
+    } else {
+      // LIVE OFF: 텐션 +, 스태미나 − (저속)
+      ss.tension = clamp(ss.tension + TENSION_REGEN_PER_SEC * TEST_TIME_SCALE);
+      ss.stamina = clamp(ss.stamina - STAMINA_DECAY_OFF_PER_SEC * TEST_TIME_SCALE);
+    }
+
+    updateGaugeUI();
+  }
+
+  // ── LIVE 토글 (btn-live 클릭) ──
+  function toggleLive() {
+    var ss = saveData.streamerStatus;
+    ss.isLive = !ss.isLive;
+
+    // LED 텍스트 반영
+    if ($ledText) {
+      $ledText.textContent = ss.isLive ? '■STOP' : '▶LIVE';
+    }
+    // 버튼 시각 상태
+    if ($btnLive) {
+      $btnLive.classList.toggle('is-live', ss.isLive);
+    }
+  }
+
+  if ($btnLive) {
+    $btnLive.addEventListener('click', toggleLive);
+  }
+
+  // ── 초기 UI 반영 & 엔진 시작 ──
+  updateGaugeUI();
+  setInterval(gaugeTick, 1000);
+})();
 </script>
 
 </body>
