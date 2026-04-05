@@ -1,28 +1,28 @@
 {
   "player": {
     "nickname": "이베코 매니저",
-    "managerLevel": 1, // [설계의도] 매니저의 숙련도 등급
-    "currentExp": 0, // [설계의도] 케어 액션(식사, 세팅, 터치)으로만 쌓이는 순수 호감도 XP
-    "totalSubscribers": 125000, // [설계의도] 레벨업(승급)을 위한 '자격 요건' 수치
-    "funds": 50000, // [설계의도] 영업(가챠)에 사용되는 순환 재화
-    "lastLogoutTimestamp": 1712360040000 // [설계의도] 오프라인 수익 및 스탯 소모 계산용
+    "managerLevel": 1,
+    "currentExp": 0,
+    "totalSubscribers": 125000,
+    "funds": 50000,
+    "lastLogoutTimestamp": 1712360040000
   },
   "streamerStatus": {
-    "isLive": false, // [설계의도] 방송 ON/OFF 토글 상태
-    "tension": 85, // [설계의도] 0~100 컨디션 (수익 배율 결정)
-    "stamina": 75, // [설계의도] 0~100 포만도 (텐션 하락 속도 결정)
+    "isLive": false,
+    "tension": 85,
+    "stamina": 75,
     "currentEquipped": {
       "head": "cos_head_crown_01",
-      "body": "cos_body_dress_01" // [설계의도] 최종 수익 계산 시 이 ID로 DB를 참조함
+      "body": "cos_body_dress_01"
     }
   },
   "dailyStats": {
-    "lastResetDate": "2026-04-06", // [설계의도] 매일 00시 일일 제한 수치 초기화용
-    "feedCount": 2, // [설계의도] 일일 식사 횟수 제한 (현재 2/4회)
-    "outfitChangeCount": 1, // [설계의도] 일일 의상 교체 텐션 보너스 수령 여부
-    "touchEnergy": 15, // [설계의도] 시간당 충전되는 소통 포인트
-    "lastEnergyRefillTimestamp": 1712360040000, // [설계의도] 에너지 개별 충전 계산용
-    "freeGachaAvailable": false // [설계의도] 데일리 무료 10연차 사용 여부
+    "lastResetDate": "2026-04-06",
+    "feedCount": 2,
+    "outfitChangeCount": 1,
+    "touchEnergy": 15,
+    "lastEnergyRefillTimestamp": 1712360040000,
+    "freeGachaAvailable": false
   },
   "inventory": {
     "consumables": [
@@ -32,9 +32,9 @@
     "costumes": [
       { 
         "id": "cos_head_crown_01", 
-        "isNew": false, // [설계의도] 옷장 진입 시 'New' 배지 표시 여부
+        "isNew": false,
         "isOwned": true,
-        "dupCount": 0 // [설계의도] 중복 획득 시 보상 변환용 카운트
+        "dupCount": 0
       },
       { "id": "cos_body_dress_01", "isNew": true, "isOwned": true, "dupCount": 1 }
     ]
