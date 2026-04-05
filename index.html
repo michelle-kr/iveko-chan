@@ -1922,11 +1922,64 @@ var saveData = getDefaultData();
 var masterConsumables = [];
 var masterCostumes = [];
 
+function ensureArrayData(data, keyCandidates) {
+  if (Array.isArray(data)) return data;
+  if (data && typeof data === 'object') {
+    for (var i = 0; i < keyCandidates.length; i++) {
+      var key = keyCandidates[i];
+      if (Array.isArray(data[key])) return data[key];
+    }
+  }
+  return [];
+}
+
+function fetchJsonFromCandidates(paths) {
+  var lastError = null;
+  var idx = 0;
+
+  function tryNext() {
+    if (idx >= paths.length) {
+      return Promise.reject(lastError || new Error('요청 가능한 경로가 없습니다.'));
+    }
+
+    var path = paths[idx++];
+    return fetch(path, { cache: 'no-cache' })
+      .then(function (res) {
+        if (!res.ok) {
+          throw new Error(path + ' HTTP ' + res.status);
+        }
+        return res.text().then(function (text) {
+          var trimmed = text.trim();
+          if (trimmed.charAt(0) === '<') {
+            throw new Error(path + ' 가 JSON 대신 HTML을 반환했습니다. (경로/파일명 확인 필요)');
+          }
+          try {
+            return JSON.parse(text);
+          } catch (e) {
+            throw new Error(path + ' JSON 파싱 실패: ' + e.message);
+          }
+        });
+      })
+      .catch(function (err) {
+        lastError = err;
+        return tryNext();
+      });
+  }
+
+  return tryNext();
+}
+
 // 데이터 로딩 함수
 function loadMasterData() {
   return Promise.all([
-    fetch('ItemDataBase.json').then(r => r.json()).then(data => { masterConsumables = data; }),
-    fetch('CostumeDataBase.json').then(r => r.json()).then(data => { masterCostumes = data; })
+    fetchJsonFromCandidates(['ItemDataBase.json', 'ItemDatabase.json']).then(function (data) {
+      masterConsumables = ensureArrayData(data, ['items', 'consumables', 'data']);
+      if (!Array.isArray(masterConsumables)) masterConsumables = [];
+    }),
+    fetchJsonFromCandidates(['CostumeDataBase.json', 'CostumeDatabase.json']).then(function (data) {
+      masterCostumes = ensureArrayData(data, ['costumes', 'items', 'data']);
+      if (!Array.isArray(masterCostumes)) masterCostumes = [];
+    })
   ]);
 }
 
@@ -1941,7 +1994,10 @@ document.addEventListener('DOMContentLoaded', function() {
       if (window.startGameAfterDataLoad) window.startGameAfterDataLoad();
     }
   }).catch(function(e) {
-    alert('마스터 데이터 로딩 실패: ' + e);
+    masterConsumables = [];
+    masterCostumes = [];
+    console.error('[MASTER DATA] 로딩 실패:', e);
+    alert('마스터 데이터 로딩 실패: ' + (e && e.message ? e.message : e));
   });
 });
 

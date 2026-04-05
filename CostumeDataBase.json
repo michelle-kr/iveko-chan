@@ -1,29 +1,31 @@
-[ 
-  {
-    "id": "cos_head_crown_01",
-    "name": "황금 왕관",
-    "part": "head", 
-    "set_id": "set_royal_01", 
-    "buffType": "FUND_GAIN", 
-    "buffValue": 0.10, 
-    "grade": "RARE"
-  },
-  {
-    "id": "cos_body_dress_01",
-    "name": "이브닝 드레스",
-    "part": "body", 
-    "set_id": "set_royal_01",
-    "buffType": "SUB_GAIN",
-    "buffValue": 0.15, 
-    "grade": "RARE"
-  }
-],
-"set_bonuses": [ 
-  {
-    "set_id": "set_royal_01",
-    "name": "로열 패밀리의 품격",
-    "required_count": 2, 
-    "buffType": "TENSION_DECAY_DOWN", 
-    "buffValue": 0.20 
-  }
-]
+{
+  "costumes": [
+    {
+      "id": "cos_head_crown_01",
+      "name": "황금 왕관",
+      "part": "head",
+      "set_id": "set_royal_01",
+      "buffType": "FUND_GAIN",
+      "buffValue": 0.10,
+      "grade": "RARE"
+    },
+    {
+      "id": "cos_body_dress_01",
+      "name": "이브닝 드레스",
+      "part": "body",
+      "set_id": "set_royal_01",
+      "buffType": "SUB_GAIN",
+      "buffValue": 0.15,
+      "grade": "RARE"
+    }
+  ],
+  "set_bonuses": [
+    {
+      "set_id": "set_royal_01",
+      "name": "로열 패밀리의 품격",
+      "required_count": 2,
+      "buffType": "TENSION_DECAY_DOWN",
+      "buffValue": 0.20
+    }
+  ]
+}
