@@ -38,5 +38,7 @@
       },
       { "id": "cos_body_dress_01", "isNew": true, "isOwned": true, "dupCount": 1 }
     ]
-  }
+  },
+  "pityCount": 0,
+  "lastSaveTime": 0
 }
