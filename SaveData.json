@@ -10,7 +10,6 @@
   "streamerStatus": {
     "isLive": false,
     "tension": 85,
-    "stamina": 75,
     "currentEquipped": {
       "head": "cos_head_crown_01",
       "body": "cos_body_dress_01"
@@ -40,5 +39,9 @@
     ]
   },
   "pityCount": 0,
-  "lastSaveTime": 0
+  "lastSaveTime": 0,
+  "dailyFreeGacha": {
+    "count": 3,
+    "lastResetDate": ""
+  }
 }

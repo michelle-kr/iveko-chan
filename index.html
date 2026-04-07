@@ -11,30 +11,9 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&family=Orbitron:wght@600;700;800&display=swap');
 @font-face {
-    font-family: 'GyeonggiMillenniumTitle';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-3@1.0/Title_Light.woff') format('woff');
-    font-weight: 300;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'GyeonggiMillenniumTitle';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-3@1.0/Title_Medium.woff') format('woff');
-    font-weight: 500;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'GyeonggiMillenniumTitle';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-3@1.0/Title_Bold.woff') format('woff');
-    font-weight: 700;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'GyeonggiMillenniumTitle';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-3@1.0/TitleV.woff') format('woff');
-    font-weight: 800;
+    font-family: 'MulmaruMono';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-4@1.1/MulmaruMono.woff2') format('woff2');
+    font-weight: normal;
     font-display: swap;
 }
 
@@ -224,12 +203,7 @@ img {
   background-position: center;
   filter: drop-shadow(0px 0px 2px rgb(253 128 50 / 50%));
 }
-.status-icon-slot.stamina {
-  background-image: url('assets/icon_stamina.png');
-  background-size: cover;
-  background-position: center;
-  filter: drop-shadow(0px 0px 2px rgb(244 241 156 / 50%));
-}
+
 .status-label-gauge {
   width: 100%;
 }
@@ -246,10 +220,27 @@ img {
 }
 
 .status-fill {
+  position: relative;
+  z-index: 1;
   height: 100%;
   border-radius: 3px;
   width: var(--fill, 65%);
   transition: width 0.5s ease;
+}
+
+.status-track-value {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  font-family: 'DosGothic', 'Pretendard', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff8ea;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.85);
 }
 
 .status-fill.life {
@@ -257,10 +248,7 @@ img {
   box-shadow: 0 0 12px rgba(255, 149, 73, 0.65);
 }
 
-.status-fill.sub {
-  background: linear-gradient(90deg, #ffcc6d 0%, #f7d879 40%, #f0e996 100%);
-  box-shadow: 0 0 12px rgba(255, 226, 142, 0.65);
-}
+
 
 .hud-right {
   display: flex;
@@ -761,7 +749,7 @@ img {
   bottom: -12px;
   font-size: 20px; 
   color: #fff; 
-  font-family: 'GyeonggiMillenniumTitle', sans-serif; 
+  font-family: 'MulmaruMono', sans-serif; 
   text-shadow: 
     -2px -2px 0 rgba(0, 0, 0, 0.5),  
      2px -2px 0 rgba(0, 0, 0, 0.5),
@@ -891,10 +879,10 @@ img {
 /* 배경+캐릭터 줌인 */
 #top-area {
   transition: transform 0.5s ease;
-  transform-origin: 50% 70%; /* Y값을 키우면 포커스가 아래로 내려감 */
+  transform-origin: 50% 35%; /* Y값을 키우면 포커스가 아래로 내려감 */
 }
 #game-container.touch-mode #top-area {
-  transform: scale(1.3);
+  transform: scale(2.5);
 }
 
 /* HUD 페이드아웃 */
@@ -929,7 +917,7 @@ img {
   bottom: -12px;
   font-size: 20px;
   color: #fff;
-  font-family: 'GyeonggiMillenniumTitle', sans-serif;
+  font-family: 'MulmaruMono', sans-serif;
   text-shadow:
     -2px -2px 0 #472f36,
      2px -2px 0 #472f36,
@@ -1289,7 +1277,7 @@ img {
 }
 
 .title-logo {
-  font-family: 'GyeonggiMillenniumTitle', 'Noto Sans KR', sans-serif;
+  font-family: 'MulmaruMono', 'Noto Sans KR', sans-serif;
   font-weight: 800;
   font-size: clamp(28px, 8vw, 42px);
   color: #fff;
@@ -1775,7 +1763,7 @@ img {
 .offline-row .ol-value.subs { color: #ff92e9; }
 .offline-row .ol-value.tension-up { color: #ffb36b; }
 .offline-row .ol-value.tension-down { color: #ff8888; }
-.offline-row .ol-value.stamina-down { color: #ff8888; }
+
 
 .offline-divider {
   border: none;
@@ -1819,7 +1807,7 @@ img {
       <div class="hud-box left-box">
         <div class="hud-left">
           <div class="status-row">
-            <div class="status-icon-slot manager-level" aria-hidden="true">5</div>
+            <div class="status-icon-slot manager-level" aria-hidden="true">Lv.<span class="manager-level-value">5</span></div>
             <div class="status-label-gauge">
               <div class="status-heart-label">Manager<br>Level</div>
             </div>
@@ -1828,15 +1816,17 @@ img {
             <div class="status-icon-slot tension" aria-hidden="true"></div>
             <div class="status-label-gauge">
               <div class="status-ability-label">TENSION</div>
-              <div class="status-track"><div class="status-fill life" style="--fill: 72%;"></div></div>
+              <div class="status-track">
+                <div class="status-fill life" style="--fill: 72%;"></div>
+                <div class="status-track-value" id="tension-track-value">72/100</div>
+              </div>
             </div>
           </div>
           <div class="status-row">
-            <div class="status-icon-slot stamina" aria-hidden="true"></div>
-            <div class="status-label-gauge">
-              <div class="status-ability-label">STAMINA</div>            
-              <div class="status-track"><div class="status-fill sub" style="--fill: 88%;"></div></div>
-            </div>
+            <div class="earnings">
+              <span class="ic">운영 자금</span>
+              <span class="earnings-value">0</span>
+            </div>          
           </div>
         </div>
       </div>
@@ -1895,10 +1885,6 @@ img {
 
     <!-- 4 Main Buttons -->
     <div class="main-btns gacha hide-on-touch">
-      <div class="earnings">
-        <span class="ic">운영 자금</span>
-        <span class="earnings-value">0</span>
-      </div>
       <div class="mbw">
         <span class="bub">일일 뽑기 가능!</span>
         <button class="mb" id="btn-gacha">
@@ -1972,10 +1958,7 @@ img {
     <div class="support-modal">
       <button class="support-close" id="support-close">&times;</button>
       <div class="support-modal-title">SUPPORT</div>
-      <div class="support-section-label">MEAL</div>
-      <div class="support-grid" id="support-grid-meal"></div>
-      <div class="support-section-label">DESSERT</div>
-      <div class="support-grid" id="support-grid-dessert"></div>
+      <div class="support-grid" id="support-grid-items"></div>
     </div>
   </div>
 
@@ -1989,7 +1972,6 @@ img {
       <div class="detail-name" id="detail-name"></div>
       <div class="detail-desc" id="detail-desc"></div>
       <div class="detail-stats">
-        <span>STA +<span id="detail-sta">0</span></span>
         <span>TEN +<span id="detail-ten">0</span></span>
       </div>
       <div class="detail-confirm-text">아이템을 사용하시겠습니까?</div>
@@ -2038,7 +2020,7 @@ img {
   <!-- ====== OFFLINE REWARD MODAL ====== -->
   <div class="offline-backdrop" id="offline-backdrop">
     <div class="offline-modal">
-      <div class="offline-title">부재중 정산 보고</div>
+      <div class="offline-title">부재중 방송 정산</div>
       <div class="offline-summary" id="offline-summary"></div>
       <button class="offline-confirm" id="offline-confirm">확인</button>
     </div>
@@ -2381,12 +2363,12 @@ var defaultData = {
   streamerStatus: {
     isLive: false,
     tension: 100,
-    stamina: 100,
     subscribers: 0,
     earnings: 0
   },
   pityCount: 0,
   lastSaveTime: 0,
+  dailyFreeGacha: { count: 3, lastResetDate: '' },
   ownedCostumes: [],
   inventory: {
     consumables: [
@@ -2440,6 +2422,9 @@ function loadGame() {
     // 신규 필드 마이그레이션
     if (typeof parsed.pityCount !== 'number') parsed.pityCount = 0;
     if (typeof parsed.lastSaveTime !== 'number') parsed.lastSaveTime = 0;
+    if (!parsed.dailyFreeGacha || typeof parsed.dailyFreeGacha !== 'object') {
+      parsed.dailyFreeGacha = { count: 3, lastResetDate: '' };
+    }
     if (!Array.isArray(parsed.ownedCostumes)) parsed.ownedCostumes = [];
     return parsed;
   } catch (e) {
@@ -2476,9 +2461,6 @@ function normalizeImportedData(parsed) {
     if (typeof incomingStatus.tension === 'number' && isFinite(incomingStatus.tension)) {
       safe.streamerStatus.tension = Math.max(0, Math.min(100, incomingStatus.tension));
     }
-    if (typeof incomingStatus.stamina === 'number' && isFinite(incomingStatus.stamina)) {
-      safe.streamerStatus.stamina = Math.max(0, Math.min(100, incomingStatus.stamina));
-    }
     if (typeof incomingStatus.subscribers === 'number' && isFinite(incomingStatus.subscribers)) {
       safe.streamerStatus.subscribers = Math.max(0, incomingStatus.subscribers);
     }
@@ -2497,6 +2479,12 @@ function normalizeImportedData(parsed) {
 
   if (typeof parsed.lastSaveTime === 'number' && isFinite(parsed.lastSaveTime)) {
     safe.lastSaveTime = Math.max(0, parsed.lastSaveTime);
+  }
+
+  if (parsed.dailyFreeGacha && typeof parsed.dailyFreeGacha === 'object') {
+    var fg = parsed.dailyFreeGacha;
+    safe.dailyFreeGacha.count = (typeof fg.count === 'number' && isFinite(fg.count)) ? Math.max(0, Math.floor(fg.count)) : 3;
+    safe.dailyFreeGacha.lastResetDate = (typeof fg.lastResetDate === 'string') ? fg.lastResetDate : '';
   }
 
   if (Array.isArray(parsed.ownedCostumes)) {
@@ -2592,6 +2580,22 @@ var saveData = getDefaultData();
 importedFromURL = importSaveFromURL();
 
 // =========================================================
+//  공유 게이지 상수 (오프라인 시뮬 + 실시간 엔진 공용)
+// =========================================================
+var GC = {
+  TENSION_DECAY_PER_SEC:   1 / 180,        // LIVE ON  : 3분당 −1
+  TENSION_REGEN_PER_SEC:   1 / 60,         // LIVE OFF : 1분당 +1
+  EARNINGS_FEVER_PER_SEC:  3000 / 180,     // 텐션 90~100 (3분당 3,000원)
+  EARNINGS_HIGH_PER_SEC:   1000 / 180,     // 텐션 70~90  (3분당 1,000원)
+  EARNINGS_MID_PER_SEC:     500 / 180,     // 텐션 30~70  (3분당 500원)
+  EARNINGS_LOW_PER_SEC:      30 / 180,     // 텐션 0~30   (3분당 30원)
+  SUBS_FEVER_PER_SEC:        5 / 180,      // 텐션 90~100
+  SUBS_HIGH_PER_SEC:         3 / 180,      // 텐션 70~90
+  SUBS_MID_PER_SEC:          2 / 180,      // 텐션 30~70
+  SUBS_LOW_PER_SEC:          1 / 180       // 텐션 0~30
+};
+
+// =========================================================
 //  오프라인 방치 보상 시뮬레이션
 // =========================================================
 function calculateOfflineRewards(sd) {
@@ -2605,31 +2609,10 @@ function calculateOfflineRewards(sd) {
   var MAX_OFFLINE_SEC = 86400; // 24시간 상한
   elapsedSec = Math.min(elapsedSec, MAX_OFFLINE_SEC);
 
-  // 게이지 상수 (게이지 엔진과 동일 값)
-  var TENSION_DECAY_PER_SEC     = 1 / 180;
-  var STAMINA_DECAY_ON_PER_SEC  = 1 / 180;
-  var STAMINA_DECAY_OFF_PER_SEC = 1 / 540;
-  var TENSION_REGEN_PER_SEC     = 1 / 60;
-  var EARNINGS_FEVER = 30 / 180;
-  var EARNINGS_HIGH  = 10 / 180;
-  var EARNINGS_MID   = 5 / 180;
-  var EARNINGS_LOW   = 0.3 / 180;
-  var SUBS_FEVER = 500 / 180;
-  var SUBS_HIGH  = 150 / 180;
-  var SUBS_MID   = 100 / 180;
-  var SUBS_LOW   = 30 / 180;
-
   function clamp(v) { return Math.min(100, Math.max(0, v)); }
-  function getTensionDecayMul(sta) {
-    if (sta < 10) return 4;
-    if (sta < 30) return 2;
-    if (sta < 70) return 1.5;
-    return 1;
-  }
 
   var ss = sd.streamerStatus;
   var tension = ss.tension;
-  var stamina = ss.stamina;
   var isLive  = ss.isLive;
 
   var totalEarnings = 0;
@@ -2639,27 +2622,24 @@ function calculateOfflineRewards(sd) {
   // 1초 단위 시뮬레이션
   while (remaining > 0) {
     if (isLive) {
-      if (stamina <= 0) {
-        // 스태미나 바닥 → 방송 종료
+      if (tension <= 0) {
+        // 텐션 바닥 → 방송 종료
         isLive = false;
         continue; // 같은 초를 OFF로 재처리
       }
-      var mul = getTensionDecayMul(stamina);
-      tension = clamp(tension - TENSION_DECAY_PER_SEC * mul);
-      stamina = clamp(stamina - STAMINA_DECAY_ON_PER_SEC);
+      tension = clamp(tension - GC.TENSION_DECAY_PER_SEC);
 
       var ePer, sPer;
-      if (tension >= 90)      { ePer = EARNINGS_FEVER; sPer = SUBS_FEVER; }
-      else if (tension >= 70) { ePer = EARNINGS_HIGH;  sPer = SUBS_HIGH; }
-      else if (tension >= 30) { ePer = EARNINGS_MID;   sPer = SUBS_MID; }
-      else                    { ePer = EARNINGS_LOW;    sPer = SUBS_LOW; }
+      if (tension >= 90)      { ePer = GC.EARNINGS_FEVER_PER_SEC; sPer = GC.SUBS_FEVER_PER_SEC; }
+      else if (tension >= 70) { ePer = GC.EARNINGS_HIGH_PER_SEC;  sPer = GC.SUBS_HIGH_PER_SEC; }
+      else if (tension >= 30) { ePer = GC.EARNINGS_MID_PER_SEC;   sPer = GC.SUBS_MID_PER_SEC; }
+      else                    { ePer = GC.EARNINGS_LOW_PER_SEC;    sPer = GC.SUBS_LOW_PER_SEC; }
 
       totalEarnings += ePer;
       totalSubs     += sPer;
     } else {
-      // OFF: 텐션 회복, 스태미나 미세 소모, 수익 없음
-      tension = clamp(tension + TENSION_REGEN_PER_SEC);
-      stamina = clamp(stamina - STAMINA_DECAY_OFF_PER_SEC);
+      // OFF: 텐션 회복, 수익 없음
+      tension = clamp(tension + GC.TENSION_REGEN_PER_SEC);
     }
     remaining--;
   }
@@ -2669,9 +2649,7 @@ function calculateOfflineRewards(sd) {
     earnedFunds: totalEarnings,
     earnedSubs: totalSubs,
     newTension: tension,
-    newStamina: stamina,
     oldTension: ss.tension,
-    oldStamina: ss.stamina,
     wasLive: ss.isLive,
     newIsLive: isLive
   };
@@ -2702,32 +2680,49 @@ function formatRewardNumber(value) {
   return Math.floor(n).toLocaleString('en-US');
 }
 
-function showOfflineRewardPopup(reward, onConfirm) {
+function showOfflineRewardPopup(reward, onConfirm, options) {
+  options = options || {};
+  var titleText = (typeof options.title === 'string') ? options.title : '부재중 방송 정산';
+  var showDuration = options.showDuration !== false;
+  var showStatus = options.showStatus !== false;
+
   var $backdrop = document.getElementById('offline-backdrop');
   var $summary  = document.getElementById('offline-summary');
   var $confirm  = document.getElementById('offline-confirm');
+  var $title    = document.querySelector('#offline-backdrop .offline-title');
 
-  var rows = '';
-  rows += '<div class="offline-row"><span class="ol-label">부재 시간</span><span class="ol-value">' + formatDuration(reward.elapsedSec) + '</span></div>';
-
-  if (reward.wasLive) {
-    rows += '<hr class="offline-divider">';
-    rows += '<div class="offline-row"><span class="ol-label">획득 자금</span><span class="ol-value earnings">+' + formatRewardNumber(reward.earnedFunds) + '</span></div>';
-    rows += '<div class="offline-row"><span class="ol-label">획득 구독자</span><span class="ol-value subs">+' + formatRewardNumber(reward.earnedSubs) + '</span></div>';
+  if ($title) {
+    $title.textContent = titleText;
   }
 
-  rows += '<hr class="offline-divider">';
+  var rows = '';
+  var hasSection = false;
+
+  if (showDuration) {
+    rows += '<div class="offline-row"><span class="ol-label">방송 시간</span><span class="ol-value">' + formatDuration(reward.elapsedSec) + '</span></div>';
+    hasSection = true;
+  }
+
+  if (reward.wasLive) {
+    if (hasSection) {
+      rows += '<hr class="offline-divider">';
+    }
+    rows += '<div class="offline-row"><span class="ol-label">획득 자금</span><span class="ol-value earnings">+' + formatRewardNumber(reward.earnedFunds) + '</span></div>';
+    rows += '<div class="offline-row"><span class="ol-label">획득 구독자</span><span class="ol-value subs">+' + formatRewardNumber(reward.earnedSubs) + '</span></div>';
+    hasSection = true;
+  }
+
+  if (hasSection) {
+    rows += '<hr class="offline-divider">';
+  }
 
   var tensionDelta = reward.newTension - reward.oldTension;
   var tensionClass = tensionDelta >= 0 ? 'tension-up' : 'tension-down';
   var tensionSign  = tensionDelta >= 0 ? '+' : '';
   rows += '<div class="offline-row"><span class="ol-label">텐션 변화</span><span class="ol-value ' + tensionClass + '">' + tensionSign + Math.round(tensionDelta) + ' (' + Math.round(reward.newTension) + ')</span></div>';
 
-  var staminaDelta = reward.newStamina - reward.oldStamina;
-  rows += '<div class="offline-row"><span class="ol-label">스태미나 변화</span><span class="ol-value stamina-down">' + Math.round(staminaDelta) + ' (' + Math.round(reward.newStamina) + ')</span></div>';
-
-  if (reward.wasLive && !reward.newIsLive) {
-    rows += '<div class="offline-row"><span class="ol-label">방송 상태</span><span class="ol-value stamina-down">스태미나 부족으로 종료됨</span></div>';
+  if (showStatus && reward.wasLive && !reward.newIsLive) {
+    rows += '<div class="offline-row"><span class="ol-label">방송 상태</span><span class="ol-value tension-down">텐션 부족으로 종료됨</span></div>';
   }
 
   $summary.innerHTML = rows;
@@ -2768,18 +2763,23 @@ function showOfflineRewardPopup(reward, onConfirm) {
       }
     }
 
-    if (reward) {
-      // 팝업 표시 → 확인 시 정산 반영
+    if (reward && reward.wasLive) {
+      // 방송 중이던 상태에서 복귀한 경우에만 정산 팝업 표시
       showOfflineRewardPopup(reward, function () {
         var ss = saveData.streamerStatus;
         ss.earnings    += reward.earnedFunds;
         ss.subscribers += reward.earnedSubs;
         ss.tension      = reward.newTension;
-        ss.stamina      = reward.newStamina;
         ss.isLive       = reward.newIsLive;
         syncLiveUI();
         saveGame();
       });
+    } else if (reward) {
+      // 방송 OFF 상태 복귀는 팝업 없이 정산만 조용히 반영
+      var ss = saveData.streamerStatus;
+      ss.tension = reward.newTension;
+      ss.isLive = reward.newIsLive;
+      saveGame();
     }
 
     syncLiveUI();
@@ -2885,15 +2885,13 @@ document.addEventListener('DOMContentLoaded', function() {
 (function () {
   var $supportBackdrop  = document.getElementById('support-backdrop');
   var $supportClose     = document.getElementById('support-close');
-  var $gridMeal      = document.getElementById('support-grid-meal');
-  var $gridDessert   = document.getElementById('support-grid-dessert');
+  var $gridItems     = document.getElementById('support-grid-items');
   var $detailBackdrop = document.getElementById('detail-backdrop');
   var $detailClose   = document.getElementById('detail-close');
   var $detailIcon    = document.getElementById('detail-icon');
   var $detailIconWrap = document.getElementById('detail-icon-wrap');
   var $detailName    = document.getElementById('detail-name');
   var $detailDesc    = document.getElementById('detail-desc');
-  var $detailSta     = document.getElementById('detail-sta');
   var $detailTen     = document.getElementById('detail-ten');
   var $detailCancel  = document.getElementById('detail-cancel');
   var $detailOk      = document.getElementById('detail-ok');
@@ -2938,15 +2936,10 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function renderGrid() {
-    $gridMeal.innerHTML = '';
-    $gridDessert.innerHTML = '';
+    $gridItems.innerHTML = '';
     masterConsumables.forEach(function (item) {
       var slot = buildSlot(item);
-      if (item.type === 'MEAL') {
-        $gridMeal.appendChild(slot);
-      } else {
-        $gridDessert.appendChild(slot);
-      }
+      $gridItems.appendChild(slot);
     });
   }
 
@@ -2976,7 +2969,6 @@ document.addEventListener('DOMContentLoaded', function() {
     $detailIconWrap.className = 'detail-icon-wrap grade-' + item.grade.toLowerCase();
     $detailName.textContent = item.name;
     $detailDesc.textContent = item.description;
-    $detailSta.textContent = item.staminaGain;
     $detailTen.textContent = item.tensionGain;
     $detailBackdrop.classList.add('show');
   }
@@ -2998,7 +2990,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (qty <= 0) return;
 
     var ss = saveData.streamerStatus;
-    ss.stamina = Math.min(100, ss.stamina + selectedItem.staminaGain);
     ss.tension = Math.min(100, ss.tension + selectedItem.tensionGain);
     setQuantity(selectedItem.id, -1);
 
@@ -3009,42 +3000,24 @@ document.addEventListener('DOMContentLoaded', function() {
 })();
 
 // =========================================================
-//  게이지 엔진 — Tension / Stamina 실시간 연동
+//  게이지 엔진 — Tension 실시간 연동
 // =========================================================
 (function () {
-  // ── 증감 상수 (1 초 단위) ──
-  var TENSION_DECAY_PER_SEC  = 1 / 180; // LIVE ON : 3 분당 −1
-  var STAMINA_DECAY_ON_PER_SEC  = 1 / 180; // LIVE ON : 3분당 -1
-  var STAMINA_DECAY_OFF_PER_SEC = 1 / 540; // LIVE OFF: 9분당 -1
-  var TENSION_REGEN_PER_SEC  = 1 / 60;  // LIVE OFF : 1 분당 +1
-  var EARNINGS_FEVER_PER_SEC = 30 / 180; // 텐션 90~100
-  var EARNINGS_HIGH_PER_SEC  = 10 / 180;   // 텐션 70~90
-  var EARNINGS_MID_PER_SEC   = 5 / 180;   // 텐션 30~70
-  var EARNINGS_LOW_PER_SEC   = 0.3 / 180; // 텐션 0~30
-  var SUBS_FEVER_PER_SEC     = 500 / 180; // 텐션 90~100
-  var SUBS_HIGH_PER_SEC      = 150 / 180; // 텐션 70~90
-  var SUBS_MID_PER_SEC       = 100 / 180; // 텐션 30~70
-  var SUBS_LOW_PER_SEC       = 30 / 180;  // 텐션 0~30
-  var TEST_TIME_SCALE        = 1;      // 테스트용 시간 배율: 10이면 10배속, 기본값은 1
-
+  var TEST_TIME_SCALE           = 1;          // 테스트용 배속 (10이면 10배속)
+  
   // ── DOM 캐시 ──
   var $tensionFill = document.querySelector('.status-fill.life');
-  var $staminaFill = document.querySelector('.status-fill.sub');
+  var $tensionTrackValue = document.getElementById('tension-track-value');
   var $liveValue   = document.querySelector('.live-value');
   var $earningsVal = document.querySelector('.earnings-value');
   var $btnLive     = document.getElementById('btn-live');
   var $ledText     = $btnLive ? $btnLive.querySelector('.led-text') : null;
+  var liveSessionSnapshot = null;
+  var liveSessionStartAt = 0;
 
   // ── 클램프 헬퍼 ──
   function clamp(v) {
     return Math.min(100, Math.max(0, v));
-  }
-
-  function getTensionDecayMultiplier(stamina) {
-    if (stamina < 10) return 4;
-    if (stamina < 30) return 2;
-    if (stamina < 70) return 1.5;
-    return 1;
   }
 
   function formatNumber(value) {
@@ -3070,13 +3043,44 @@ document.addEventListener('DOMContentLoaded', function() {
     return Math.floor(n).toLocaleString('en-US');
   }
 
+  function startLiveSessionSnapshot() {
+    var ss = saveData.streamerStatus;
+    liveSessionStartAt = Date.now();
+    liveSessionSnapshot = {
+      earnings: ss.earnings,
+      subscribers: ss.subscribers,
+      tension: ss.tension
+    };
+  }
+
+  function buildStopSettlementReward() {
+    var ss = saveData.streamerStatus;
+    var snapshot = liveSessionSnapshot || {
+      earnings: ss.earnings,
+      subscribers: ss.subscribers,
+      tension: ss.tension
+    };
+    var elapsedSec = Math.max(1, Math.floor((Date.now() - (liveSessionStartAt || Date.now())) / 1000));
+
+    return {
+      elapsedSec: elapsedSec,
+      earnedFunds: Math.max(0, ss.earnings - snapshot.earnings),
+      earnedSubs: Math.max(0, ss.subscribers - snapshot.subscribers),
+      newTension: ss.tension,
+      oldTension: snapshot.tension,
+      wasLive: true,
+      newIsLive: false
+    };
+  }
+
   // ── UI 갱신 ──
   function updateGaugeUI() {
+    var tensionValue = clamp(saveData.streamerStatus.tension);
     if ($tensionFill) {
-      $tensionFill.style.setProperty('--fill', clamp(saveData.streamerStatus.tension) + '%');
+      $tensionFill.style.setProperty('--fill', tensionValue + '%');
     }
-    if ($staminaFill) {
-      $staminaFill.style.setProperty('--fill', clamp(saveData.streamerStatus.stamina) + '%');
+    if ($tensionTrackValue) {
+      $tensionTrackValue.textContent = Math.round(tensionValue) + '/100';
     }
     if ($liveValue) {
       $liveValue.textContent = formatNumber(saveData.streamerStatus.subscribers);
@@ -3093,31 +3097,37 @@ document.addEventListener('DOMContentLoaded', function() {
     var subsPerSec = 0;
 
     if (ss.isLive) {
-      // LIVE ON: 텐션 −, 스태미나 − (고속)
-      var tensionDecayMul = getTensionDecayMultiplier(ss.stamina);
-      ss.tension = clamp(ss.tension - TENSION_DECAY_PER_SEC * tensionDecayMul * TEST_TIME_SCALE);
-      ss.stamina = clamp(ss.stamina - STAMINA_DECAY_ON_PER_SEC * TEST_TIME_SCALE);
+      // 텐션 0 → 강제 휴식(OFF)
+      if (ss.tension <= 0) {
+        ss.isLive = false;
+        if ($ledText) $ledText.textContent = '▶LIVE';
+        if ($btnLive) $btnLive.classList.remove('is-live');
+        updateGaugeUI();
+        return;
+      }
+
+      // LIVE ON: 텐션 고정 감소
+      ss.tension = clamp(ss.tension - GC.TENSION_DECAY_PER_SEC * TEST_TIME_SCALE);
 
       if (ss.tension >= 90) {
-        earningsPerSec = EARNINGS_FEVER_PER_SEC;
-        subsPerSec = SUBS_FEVER_PER_SEC;
+        earningsPerSec = GC.EARNINGS_FEVER_PER_SEC;
+        subsPerSec = GC.SUBS_FEVER_PER_SEC;
       } else if (ss.tension >= 70) {
-        earningsPerSec = EARNINGS_HIGH_PER_SEC;
-        subsPerSec = SUBS_HIGH_PER_SEC;
+        earningsPerSec = GC.EARNINGS_HIGH_PER_SEC;
+        subsPerSec = GC.SUBS_HIGH_PER_SEC;
       } else if (ss.tension >= 30) {
-        earningsPerSec = EARNINGS_MID_PER_SEC;
-        subsPerSec = SUBS_MID_PER_SEC;
+        earningsPerSec = GC.EARNINGS_MID_PER_SEC;
+        subsPerSec = GC.SUBS_MID_PER_SEC;
       } else {
-        earningsPerSec = EARNINGS_LOW_PER_SEC;
-        subsPerSec = SUBS_LOW_PER_SEC;
+        earningsPerSec = GC.EARNINGS_LOW_PER_SEC;
+        subsPerSec = GC.SUBS_LOW_PER_SEC;
       }
 
       ss.earnings += earningsPerSec * TEST_TIME_SCALE;
       ss.subscribers += subsPerSec * TEST_TIME_SCALE;
     } else {
-      // LIVE OFF: 텐션 +, 스태미나 − (저속)
-      ss.tension = clamp(ss.tension + TENSION_REGEN_PER_SEC * TEST_TIME_SCALE);
-      ss.stamina = clamp(ss.stamina - STAMINA_DECAY_OFF_PER_SEC * TEST_TIME_SCALE);
+      // LIVE OFF: 텐션 회복
+      ss.tension = clamp(ss.tension + GC.TENSION_REGEN_PER_SEC * TEST_TIME_SCALE);
     }
 
     updateGaugeUI();
@@ -3126,7 +3136,21 @@ document.addEventListener('DOMContentLoaded', function() {
   // ── LIVE 토글 (btn-live 클릭) ──
   function toggleLive() {
     var ss = saveData.streamerStatus;
-    ss.isLive = !ss.isLive;
+
+    if (!ss.isLive) {
+      ss.isLive = true;
+      startLiveSessionSnapshot();
+    } else {
+      var reward = buildStopSettlementReward();
+      ss.isLive = false;
+      liveSessionSnapshot = null;
+      liveSessionStartAt = 0;
+      showOfflineRewardPopup(reward, null, {
+        title: '방송 정산',
+        showDuration: true,
+        showStatus: false
+      });
+    }
 
     // LED 텍스트 반영
     if ($ledText) {
@@ -3142,19 +3166,47 @@ document.addEventListener('DOMContentLoaded', function() {
     $btnLive.addEventListener('click', toggleLive);
   }
 
+  if (saveData.streamerStatus.isLive) {
+    startLiveSessionSnapshot();
+  }
+
   // ── 초기 UI 반영 & 엔진 시작 ──
   updateGaugeUI();
   setInterval(gaugeTick, 1000);
 })();
 
 // =========================================================
+//  일일 무료 가챠 리셋 — 매일 새벽 5시 기준
+// =========================================================
+function getDailyResetDateKey() {
+  // 새벽 5시 기준 날짜 키: 현재 시각에서 5시간을 빼서 날짜를 결정
+  var now = new Date();
+  var adjusted = new Date(now.getTime() - 5 * 60 * 60 * 1000);
+  var y = adjusted.getFullYear();
+  var m = String(adjusted.getMonth() + 1).padStart(2, '0');
+  var d = String(adjusted.getDate()).padStart(2, '0');
+  return y + '-' + m + '-' + d;
+}
+
+function checkAndResetDailyFreeGacha() {
+  var todayKey = getDailyResetDateKey();
+  if (!saveData.dailyFreeGacha) {
+    saveData.dailyFreeGacha = { count: 3, lastResetDate: '' };
+  }
+  if (saveData.dailyFreeGacha.lastResetDate !== todayKey) {
+    saveData.dailyFreeGacha.count = 3;
+    saveData.dailyFreeGacha.lastResetDate = todayKey;
+  }
+}
+
+// =========================================================
 //  영업(가챠) 시스템 — 진입 모달 + 가변 연차 + SKIP + 천장
 // =========================================================
 (function () {
-  var GACHA_COST = 100;
+  var GACHA_COST = 2000;
   var MAX_SMART_PULL = 10;
   var PITY_THRESHOLD = 100;
-  var REFUND = { COMMON: 10, RARE: 20, LEGENDARY: 100 };
+  var REFUND = { COMMON: 200, RARE: 500, LEGENDARY: 2000 };
   var GRADE_WEIGHTS = { COMMON: 80, RARE: 15, LEGENDARY: 5 };
   var CATEGORY_ITEM_PCT = 98.5;
   var REVEAL_DELAY = 200;
@@ -3183,12 +3235,18 @@ document.addEventListener('DOMContentLoaded', function() {
   var lastPullCount = 0;
 
   function getSmartPullPreset(earnings) {
-    // 200~999 구간에서만 n회 가변 표기
-    if (earnings >= 200 && earnings < 1000) {
+    // 무료 횟수가 남아있으면 무조건 10연차
+    checkAndResetDailyFreeGacha();
+    var freeCount = saveData.dailyFreeGacha ? saveData.dailyFreeGacha.count : 0;
+    if (freeCount > 0) {
+      return { count: MAX_SMART_PULL, cost: GACHA_COST * MAX_SMART_PULL };
+    }
+    // 2000~9999 구간에서만 n회 가변 표기
+    if (earnings >= 2 * GACHA_COST && earnings < MAX_SMART_PULL * GACHA_COST) {
       var n = Math.floor(earnings / GACHA_COST);
       return { count: n, cost: n * GACHA_COST };
     }
-    // 100 이하 / 1000 이상 / 101~199 구간은 고정 10회 목표 표기
+    // 그 외 구간은 고정 10회 목표 표기
     return { count: MAX_SMART_PULL, cost: GACHA_COST * MAX_SMART_PULL };
   }
 
@@ -3205,7 +3263,9 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function updateEntryButtons() {
+    checkAndResetDailyFreeGacha();
     var earnings = Math.max(0, Math.floor(saveData.streamerStatus.earnings || 0));
+    var freeCount = saveData.dailyFreeGacha ? saveData.dailyFreeGacha.count : 0;
     var smartPreset = getSmartPullPreset(earnings);
 
     setEntryButtonState(
@@ -3213,19 +3273,28 @@ document.addEventListener('DOMContentLoaded', function() {
       $pullOneLabel,
       '1번 뽑기',
       $pullOneCostValue,
-      formatCost(100),
-      100,
+      formatCost(GACHA_COST),
+      GACHA_COST,
       earnings
     );
-    setEntryButtonState(
-      $pullSmartBtn,
-      $pullSmartLabel,
-      smartPreset.count + '번 뽑기',
-      $pullSmartCostValue,
-      formatCost(smartPreset.cost),
-      smartPreset.cost,
-      earnings
-    );
+
+    // 10연차: 무료 횟수가 남아있으면 무조건 활성화
+    if (freeCount > 0) {
+      if ($pullSmartLabel) $pullSmartLabel.textContent = '10번 뽑기';
+      if ($pullSmartCostValue) $pullSmartCostValue.textContent = '무료 ' + freeCount + '/' + 3;
+      $pullSmartBtn.disabled = false;
+      $pullSmartBtn.classList.remove('show-insufficient');
+    } else {
+      setEntryButtonState(
+        $pullSmartBtn,
+        $pullSmartLabel,
+        smartPreset.count + '번 뽑기',
+        $pullSmartCostValue,
+        formatCost(smartPreset.cost),
+        smartPreset.cost,
+        earnings
+      );
+    }
   }
 
   function openEntryModal() {
@@ -3358,11 +3427,18 @@ document.addEventListener('DOMContentLoaded', function() {
     $bottomBtns.classList.toggle('confirm-only', !shouldShowRetry);
 
     if (shouldShowRetry) {
+      checkAndResetDailyFreeGacha();
+      var freeCount = saveData.dailyFreeGacha ? saveData.dailyFreeGacha.count : 0;
       var retryCost = lastPullCount * GACHA_COST;
-      var isInsufficient = (saveData.streamerStatus.earnings < retryCost);
-      $retryBtn.textContent = '다시 뽑기 (' + lastPullCount + '회)';
+      var canFree = (lastPullCount === 10 && freeCount > 0);
+      var isInsufficient = !canFree && (saveData.streamerStatus.earnings < retryCost);
+
+      var retryLabel = '다시 뽑기 (' + lastPullCount + '회)';
       var retryBadge = '<span class="gacha-insufficient-badge">자금 부족</span>';
-      $retryBtn.innerHTML = '다시 뽑기 (' + lastPullCount + '회)' + retryBadge;
+      if (canFree) {
+        retryLabel = '다시 뽑기 (10회·무료 ' + freeCount + '/' + 3 + ')';
+      }
+      $retryBtn.innerHTML = retryLabel + retryBadge;
       $retryBtn.disabled = isInsufficient;
       $retryBtn.classList.toggle('show-insufficient', lastPullCount === 10 && isInsufficient);
     }
@@ -3399,10 +3475,19 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function runGacha(pullCount) {
+    checkAndResetDailyFreeGacha();
     var totalCost = pullCount * GACHA_COST;
     var ss = saveData.streamerStatus;
+    var usedFree = false;
 
-    if (ss.earnings < totalCost) {
+    // 10연차이고 무료 횟수가 남아있으면 무료 사용
+    if (pullCount === 10 && saveData.dailyFreeGacha && saveData.dailyFreeGacha.count > 0) {
+      saveData.dailyFreeGacha.count--;
+      usedFree = true;
+      totalCost = 0;
+    }
+
+    if (!usedFree && ss.earnings < totalCost) {
       alert('방송 자금이 부족합니다! (필요: ' + totalCost + ')');
       return false;
     }
@@ -3410,7 +3495,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // 실행 직전 저장
     saveGame();
 
-    ss.earnings -= totalCost;
+    if (!usedFree) {
+      ss.earnings -= totalCost;
+    }
 
     // 재화 차감 직후 저장
     saveGame();
