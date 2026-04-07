@@ -211,7 +211,7 @@ img {
 .status-track {
   position: relative;
   width: 100%;
-  height: 16px;
+  height: 12px;
   border-radius: 5px;
   border: 2px solid rgba(255, 163, 89, 0.75);
   background: rgba(31, 15, 7, 0.8);
@@ -1807,10 +1807,12 @@ img {
       <div class="hud-box left-box">
         <div class="hud-left">
           <div class="status-row">
-            <div class="status-icon-slot manager-level" aria-hidden="true">Lv.<span class="manager-level-value">5</span></div>
-            <div class="status-label-gauge">
-              <div class="status-heart-label">Manager<br>Level</div>
-            </div>
+            <div class="status-icon-slot manager-level" aria-hidden="true"><span class="manager-level-value">5</span></div>
+            <div class="status-ability-label">EXP</div>
+              <div class="status-track">
+                <div class="status-fill life" style="--fill: 72%;"></div>
+                <div class="status-track-value" id="tension-track-value">72/100</div>
+              </div>
           </div>
           <div class="status-row">
             <div class="status-icon-slot tension" aria-hidden="true"></div>
@@ -1822,12 +1824,6 @@ img {
               </div>
             </div>
           </div>
-          <div class="status-row">
-            <div class="earnings">
-              <span class="ic">운영 자금</span>
-              <span class="earnings-value">0</span>
-            </div>          
-          </div>
         </div>
       </div>
       <div class="hud-box right-box">
@@ -1835,6 +1831,12 @@ img {
           <div class="live-title">LIVE SUB</div>
           <div class="live-board"><div class="live-value">1,234,567M</div></div>
         </div>
+        <div class="status-row">
+          <div class="earnings">
+            <span class="ic">운영 자금</span>
+            <span class="earnings-value">0</span>
+          </div>          
+        </div>        
       </div>
     </div>
 
@@ -2586,13 +2588,13 @@ var GC = {
   TENSION_DECAY_PER_SEC:   1 / 180,        // LIVE ON  : 3분당 −1
   TENSION_REGEN_PER_SEC:   1 / 60,         // LIVE OFF : 1분당 +1
   EARNINGS_FEVER_PER_SEC:  3000 / 180,     // 텐션 90~100 (3분당 3,000원)
-  EARNINGS_HIGH_PER_SEC:   1000 / 180,     // 텐션 70~90  (3분당 1,000원)
-  EARNINGS_MID_PER_SEC:     500 / 180,     // 텐션 30~70  (3분당 500원)
-  EARNINGS_LOW_PER_SEC:      30 / 180,     // 텐션 0~30   (3분당 30원)
+  EARNINGS_HIGH_PER_SEC:   1000 / 180,     // 텐션 70~89  (3분당 1,000원)
+  EARNINGS_MID_PER_SEC:     500 / 180,     // 텐션 30~69  (3분당 500원)
+  EARNINGS_LOW_PER_SEC:      30 / 180,     // 텐션 0~29   (3분당 30원)
   SUBS_FEVER_PER_SEC:        5 / 180,      // 텐션 90~100
-  SUBS_HIGH_PER_SEC:         3 / 180,      // 텐션 70~90
-  SUBS_MID_PER_SEC:          2 / 180,      // 텐션 30~70
-  SUBS_LOW_PER_SEC:          1 / 180       // 텐션 0~30
+  SUBS_HIGH_PER_SEC:         3 / 180,      // 텐션 70~89
+  SUBS_MID_PER_SEC:          2 / 180,      // 텐션 30~69
+  SUBS_LOW_PER_SEC:          1 / 180       // 텐션 0~29
 };
 
 // =========================================================
@@ -3004,6 +3006,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // =========================================================
 (function () {
   var TEST_TIME_SCALE           = 1;          // 테스트용 배속 (10이면 10배속)
+  var lastGaugeTickTime         = Date.now(); // 마지막 틱 타임스탬프 (백그라운드 보정용)
   
   // ── DOM 캐시 ──
   var $tensionFill = document.querySelector('.status-fill.life');
@@ -3090,44 +3093,49 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  // ── 1 초 틱 ──
+  // ── 1 초 틱 (백그라운드 탭 보정 포함) ──
   function gaugeTick() {
+    var now = Date.now();
+    var deltaSec = Math.floor((now - lastGaugeTickTime) / 1000);
+    if (deltaSec <= 0) return;
+    lastGaugeTickTime += deltaSec * 1000; // 소수점 이하 보존
+
+    // 백그라운드 체류 시간 상한: 1시간
+    deltaSec = Math.min(deltaSec, 3600);
+
     var ss = saveData.streamerStatus;
-    var earningsPerSec = 0;
-    var subsPerSec = 0;
 
-    if (ss.isLive) {
-      // 텐션 0 → 강제 휴식(OFF)
-      if (ss.tension <= 0) {
-        ss.isLive = false;
-        if ($ledText) $ledText.textContent = '▶LIVE';
-        if ($btnLive) $btnLive.classList.remove('is-live');
-        updateGaugeUI();
-        return;
-      }
+    for (var step = 0; step < deltaSec; step++) {
+      if (ss.isLive) {
+        if (ss.tension <= 0) {
+          ss.isLive = false;
+          if ($ledText) $ledText.textContent = '▶LIVE';
+          if ($btnLive) $btnLive.classList.remove('is-live');
+          break;
+        }
 
-      // LIVE ON: 텐션 고정 감소
-      ss.tension = clamp(ss.tension - GC.TENSION_DECAY_PER_SEC * TEST_TIME_SCALE);
+        ss.tension = clamp(ss.tension - GC.TENSION_DECAY_PER_SEC * TEST_TIME_SCALE);
 
-      if (ss.tension >= 90) {
-        earningsPerSec = GC.EARNINGS_FEVER_PER_SEC;
-        subsPerSec = GC.SUBS_FEVER_PER_SEC;
-      } else if (ss.tension >= 70) {
-        earningsPerSec = GC.EARNINGS_HIGH_PER_SEC;
-        subsPerSec = GC.SUBS_HIGH_PER_SEC;
-      } else if (ss.tension >= 30) {
-        earningsPerSec = GC.EARNINGS_MID_PER_SEC;
-        subsPerSec = GC.SUBS_MID_PER_SEC;
+        var earningsPerSec, subsPerSec;
+        if (ss.tension >= 90) {
+          earningsPerSec = GC.EARNINGS_FEVER_PER_SEC;
+          subsPerSec = GC.SUBS_FEVER_PER_SEC;
+        } else if (ss.tension >= 70) {
+          earningsPerSec = GC.EARNINGS_HIGH_PER_SEC;
+          subsPerSec = GC.SUBS_HIGH_PER_SEC;
+        } else if (ss.tension >= 30) {
+          earningsPerSec = GC.EARNINGS_MID_PER_SEC;
+          subsPerSec = GC.SUBS_MID_PER_SEC;
+        } else {
+          earningsPerSec = GC.EARNINGS_LOW_PER_SEC;
+          subsPerSec = GC.SUBS_LOW_PER_SEC;
+        }
+
+        ss.earnings += earningsPerSec * TEST_TIME_SCALE;
+        ss.subscribers += subsPerSec * TEST_TIME_SCALE;
       } else {
-        earningsPerSec = GC.EARNINGS_LOW_PER_SEC;
-        subsPerSec = GC.SUBS_LOW_PER_SEC;
+        ss.tension = clamp(ss.tension + GC.TENSION_REGEN_PER_SEC * TEST_TIME_SCALE);
       }
-
-      ss.earnings += earningsPerSec * TEST_TIME_SCALE;
-      ss.subscribers += subsPerSec * TEST_TIME_SCALE;
-    } else {
-      // LIVE OFF: 텐션 회복
-      ss.tension = clamp(ss.tension + GC.TENSION_REGEN_PER_SEC * TEST_TIME_SCALE);
     }
 
     updateGaugeUI();
@@ -3173,6 +3181,14 @@ document.addEventListener('DOMContentLoaded', function() {
   // ── 초기 UI 반영 & 엔진 시작 ──
   updateGaugeUI();
   setInterval(gaugeTick, 1000);
+
+  // ── 탭 복귀 시 즉시 보정 ──
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') {
+      gaugeTick();  // 경과 시간만큼 즉시 반영
+      tick();       // 배경·시계 갱신
+    }
+  });
 })();
 
 // =========================================================
