@@ -146,12 +146,35 @@ img {
 }
 .hud-box.right-box {
   width: calc(63% - 6px);
-  padding: 10px 10px;
-  border-color: rgba(255, 120, 206, 0.7);
+  padding: 10px;
+  border-radius: 12px;
+  border: 2px solid rgba(153, 153, 153, 0.8);
+  background-color: #09090c;
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(44, 44, 49, 0.95) 0 1.3px, rgba(10, 10, 14, 0) 1.4px),
+    radial-gradient(circle at 50% 50%, rgba(11, 11, 13, 0.9) 0 0.55px, rgba(0, 0, 0, 0) 0.7px),
+    linear-gradient(180deg, rgba(26, 25, 30, 0.98), rgba(10, 10, 14, 0.98));
+  background-size: 6px 6px, 6px 6px, 100% 100%;
+  background-position: 0 0, 3px 3px, 0 0;
   box-shadow:
-    0 0 0 1px rgba(124, 54, 104, 0.55) inset,
-    0 0 18px rgba(255, 102, 214, 0.32),
-    0 8px 20px rgba(0, 0, 0, 0.56);
+    0 0 12px rgba(165, 165, 165, 0.44),
+    inset 0 0 18px rgba(163, 163, 163, 0.2),
+    inset 0 -8px 20px rgba(0, 0, 0, 0.5);    
+  font-family: 'MulmaruMono', 'DosGothic', monospace;
+  font-weight: 700;
+  font-size: clamp(24px, 9vw, 30px);
+  line-height: 1;
+  letter-spacing: 1px;
+  color: transparent;
+
+}
+.right-box::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 85% at 50% 5%, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0));
+  z-index: 1;
 }
 .hud-left {
   display: flex;
@@ -248,8 +271,6 @@ img {
   box-shadow: 0 0 12px rgba(255, 149, 73, 0.65);
 }
 
-
-
 .hud-right {
   display: flex;
   flex-direction: column;
@@ -270,35 +291,14 @@ img {
 
 .live-board {
   position: relative;
-  border-radius: 12px;
-  border: 2px solid rgba(255, 128, 226, 0.88);
-  background-color: #09090c;
-  background-image:
-    radial-gradient(circle at 50% 50%, rgba(44, 44, 49, 0.95) 0 1.3px, rgba(10, 10, 14, 0) 1.4px),
-    radial-gradient(circle at 50% 50%, rgba(11, 11, 13, 0.9) 0 0.55px, rgba(0, 0, 0, 0) 0.7px),
-    linear-gradient(180deg, rgba(26, 25, 30, 0.98), rgba(10, 10, 14, 0.98));
-  background-size: 6px 6px, 6px 6px, 100% 100%;
-  background-position: 0 0, 3px 3px, 0 0;
-  box-shadow:
-    0 0 12px rgba(255, 128, 222, 0.44),
-    inset 0 0 18px rgba(255, 96, 196, 0.2),
-    inset 0 -8px 20px rgba(0, 0, 0, 0.5);
-  padding: 14px 10px 11px;
   display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
   justify-content: center;
-  overflow: hidden;
+  gap: 4px;
+  align-items: end;
   isolation: isolate;
 }
-
-.live-board::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(120% 85% at 50% 5%, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0));
-  z-index: 1;
-}
-
 .live-board::after {
   content: '';
   position: absolute;
@@ -312,32 +312,36 @@ img {
     rgba(0, 0, 0, 0) 1px 3px
   );
 }
-
-.live-value {
+.live-value, .earnings-value {
   position: relative;
   z-index: 3;
-  font-family: 'Orbitron', 'DosGothic', monospace;
-  font-weight: 700;
-  font-size: clamp(28px, 10vw, 36px);
-  line-height: 1;
-  letter-spacing: 1px;
-  color: transparent;
-  background-image:
-    radial-gradient(circle, rgba(255, 146, 233, 0.98) 0 44%, rgba(255, 110, 220, 0.24) 54%, rgba(255, 110, 220, 0) 66%),
-    linear-gradient(180deg, #ffd4f6 0%, #ff92e9 55%, #b55fa6 100%);
   background-size: 6px 6px, 100% 100%;
   background-position: 0 0, 0 0;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  transition: transform 0.25s ease, filter 0.25s ease, opacity 0.25s ease, text-shadow 0.25s ease;
+  will-change: transform, filter, opacity;
+}
+.live-value {
+  background-image:
+    radial-gradient(circle, rgba(255, 146, 233, 0.98) 0 44%, rgba(255, 110, 220, 0.24) 54%, rgba(255, 110, 220, 0) 66%),
+    linear-gradient(180deg, #ffd4f6 0%, #ff92e9 55%, #b55fa6 100%);
   text-shadow:
     0 0 7px rgba(255, 156, 239, 0.5),
     0 0 18px rgba(245, 121, 223, 0.4),
     0 0 28px rgba(255, 119, 233, 0.2);
-  transition: transform 0.25s ease, filter 0.25s ease, opacity 0.25s ease, text-shadow 0.25s ease;
-  will-change: transform, filter, opacity;
 }
 
+.earnings-value {
+    background-image: 
+    radial-gradient(circle, rgb(255 238 5 / 98%) 0 44%, rgb(255 237 110 / 24%) 54%, rgba(255, 110, 220, 0) 66%),
+    linear-gradient(180deg, #fff8d4 0%, #ffc671 55%, #b5a25f 100%);
+    text-shadow: 
+    0 0 7px rgb(255 239 156 / 50%), 
+    0 0 18px rgb(245 231 121 / 40%), 
+    0 0 28px rgb(255 227 119 / 20%);
+}
 
 @media (max-width: 420px) {
   #top-hud {
@@ -362,7 +366,7 @@ img {
     width: calc(63% - 4px);
     min-width: 0;
     margin-bottom: 0;
-    padding: 10px 6px;
+    padding: 0px;
     box-sizing: border-box;
   }
   .live-title {
@@ -414,6 +418,17 @@ img {
 }
 .tog.on .knob { left: 18px; }
 
+/* ===== Character Wrapper ===== */
+.character-wrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  transition: clip-path 0.5s ease;
+  transform-origin: bottom center;
+  animation: characterBreath 4.6s ease-in-out infinite;
+}
+
 /* ===== Character ===== */
 #character-container {
   position: absolute;
@@ -426,7 +441,6 @@ img {
   z-index: 5;
   pointer-events: none;
   filter: drop-shadow(0 4px 14px rgba(160,80,130,0.25));
-  animation: characterBreath 4.6s ease-in-out infinite;
   transition: filter 0.8s ease;
 }
 
@@ -471,9 +485,9 @@ img {
 }
 
 @keyframes characterBreath {
-  0% { transform: translateX(-50%) scaleY(1); }
-  50% { transform: translateX(-50%) scaleY(1.01); }
-  100% { transform: translateX(-50%) scaleY(1); }
+  0% { transform: scaleY(1); }
+  50% { transform: scaleY(1.01); }
+  100% { transform: scaleY(1); }
 }
 
 /* 각 속성별 독립 사인파: 3키프레임 + alternate → 완벽한 사인파 */
@@ -562,16 +576,15 @@ img {
 .main-btns {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 20px;
   flex: 1;
   align-items: end;
 }
+.live-broadcast .main-btns {
+  gap: 0px;
+}
 .main-btns.gacha {
   align-items: start;
-}
-.main-btns.menu {
-  flex-direction: column;
-  gap: 24px;
 }
 .mbw {
   position: relative;
@@ -1368,15 +1381,18 @@ img {
 
 .gacha-entry-title, .gacha-entry-info {
   text-align: center;
-  font-family: 'DosGothic', 'Noto Sans KR', sans-serif;
-  font-size: 18px;
+  font-size: 20px;
   color: #e0c0ff;
   letter-spacing: 1px;
   text-shadow: 0 0 8px rgba(200, 140, 255, 0.6);
 }
+.gacha-entry-title {
+  font-family: 'MulmaruMono', 'Noto Sans KR', sans-serif;
+}
 .gacha-entry-info {
   color: #eadcf4;
-  font-size: 13px;
+  font-size: 16px;
+  font-family: 'Noto Sans KR', sans-serif;
 }
 .gacha-entry-btns {
   display: flex;
@@ -1408,7 +1424,7 @@ img {
   border: none;
   position: relative;
   overflow: visible;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   display: flex;
   flex-direction: column;
@@ -1786,6 +1802,271 @@ img {
   -webkit-tap-highlight-color: transparent;
 }
 .offline-confirm:active { transform: scale(0.95); }
+
+/* ===== Broadcast Mode Selection Modal ===== */
+.broadcast-mode-backdrop {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 5, 20, 0.72);
+  z-index: 380;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+.broadcast-mode-backdrop.show { display: flex; }
+
+.broadcast-mode-modal {
+  position: relative;
+  width: calc(100% - 30px);
+  background: linear-gradient(160deg, #1a1528, #0f0d1a);
+  border: 1.5px solid rgba(200, 140, 255, 0.5);
+  border-radius: 18px;
+  padding: 20px 16px 16px;
+  box-shadow:
+    0 0 24px rgba(180, 100, 240, 0.28),
+    inset 0 0 12px rgba(140, 80, 200, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: 'MulmaruMono', 'Noto Sans KR', sans-serif;
+}
+
+.broadcast-mode-title {
+  text-align: center;
+  font-size: 22px;
+  color: #e0c0ff;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px rgba(200, 140, 255, 0.6);
+}
+
+.broadcast-mode-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.broadcast-mode-btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(200, 160, 255, 0.3);
+  background: rgba(40, 30, 60, 0.7);
+  color: #eadcf4;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.1s, background 0.15s, border-color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+.broadcast-mode-btn:active { transform: scale(0.97); }
+
+.broadcast-mode-btn .mode-name { font-size: 20px; color: #fff; }
+.broadcast-mode-btn .mode-stats { font-size: 16px; color: #b8a0cc; letter-spacing: 0.3px; }
+
+.broadcast-mode-btn.talk { border-color: rgba(100, 200, 150, 0.4); }
+.broadcast-mode-btn.talk:hover { border-color: rgba(100, 200, 150, 0.8); background: rgba(30, 60, 40, 0.6); }
+.broadcast-mode-btn.game { border-color: rgba(100, 160, 255, 0.4); }
+.broadcast-mode-btn.game:hover { border-color: rgba(100, 160, 255, 0.8); background: rgba(30, 40, 80, 0.6); }
+.broadcast-mode-btn.song { border-color: rgba(255, 140, 200, 0.4); }
+.broadcast-mode-btn.song:hover { border-color: rgba(255, 140, 200, 0.8); background: rgba(80, 30, 60, 0.6); }
+
+.broadcast-mode-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  color: #d0b8e8;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ===== Broadcast Prep (Countdown) Screen ===== */
+.broadcast-prep-backdrop {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 5, 20, 0.85);
+  z-index: 390;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.broadcast-prep-backdrop.show { display: flex; }
+
+.broadcast-prep-title {
+  font-family: 'MulmaruMono', 'DosGothic', monospace;
+  font-size: 20px;
+  color: #e0c0ff;
+  letter-spacing: 2px;
+  text-shadow: 0 0 12px rgba(200, 140, 255, 0.6);
+}
+.broadcast-prep-mode-label {
+  font-family: 'DosGothic', 'Noto Sans KR', sans-serif;
+  font-size: 14px;
+  color: #b8a0cc;
+}
+.broadcast-prep-thumbnail {
+  width: 80%;
+  max-width: 320px;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  border: 1.5px solid rgba(200, 140, 255, 0.35);
+  background: rgba(30, 20, 45, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.broadcast-prep-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.broadcast-prep-countdown {
+  font-family: 'Orbitron', monospace;
+  font-size: 72px;
+  font-weight: 800;
+  color: #fff;
+  text-shadow:
+    0 0 20px rgba(255, 140, 220, 0.7),
+    0 0 40px rgba(200, 100, 240, 0.4);
+  line-height: 1;
+}
+.broadcast-prep-hint {
+  font-size: 12px;
+  color: rgba(200, 180, 220, 0.6);
+  text-align: center;
+}
+.broadcast-prep-btns {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+.broadcast-prep-btns button {
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(200, 180, 220, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  color: #d0b8e8;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s, background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.broadcast-prep-btns button:active { transform: scale(0.95); }
+.broadcast-prep-btns button:hover { background: rgba(255, 255, 255, 0.15); }
+
+/* ===== Broadcast Live 16:9 Overlay ===== */
+.broadcast-dark-overlay {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.78);
+  z-index: 11;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  pointer-events: none;
+}
+.broadcast-dark-overlay-top { top: 0; }
+.broadcast-dark-overlay-bottom { bottom: 0; }
+#game-container.live-broadcast .broadcast-dark-overlay { display: block; }
+
+.broadcast-live-frame-border {
+  display: none;
+  position: absolute;
+  left: 0;
+  width: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 12;
+  border-top: 2px solid rgba(255, 50, 50, 0.6);
+  border-bottom: 2px solid rgba(255, 50, 50, 0.6);
+  box-shadow: 0 0 12px rgba(255, 0, 0, 0.2);
+  pointer-events: none;
+}
+#game-container.live-broadcast .broadcast-live-frame-border { display: block; }
+
+.broadcast-mode-indicator {
+  display: none;
+  position: absolute;
+  z-index: 16;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(255, 0, 0, 0.7);
+  color: #fff;
+  font-family: 'DosGothic', 'Noto Sans KR', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  animation: liveIndicatorPulse 2s ease-in-out infinite;
+}
+#game-container.live-broadcast .broadcast-mode-indicator { display: block; }
+@keyframes liveIndicatorPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* 방송 중 캐릭터 클로즈업 */
+#game-container.live-broadcast #character-container {
+  transform: translateX(-50%) scale(2.0);
+  bottom: -50%;  /* ← 방송 중 캐릭터 위치: 이 값을 변경하세요 */
+  /* animation은 유지 — 호흡 애니메이션 + 머리카락 등 계속 재생 */
+}
+
+/* 눕방 오버레이 이미지 */
+.noopbang-overlay {
+  display: none;
+  position: absolute;
+  left: 0;
+  width: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  aspect-ratio: 16 / 9;
+  z-index: 13;
+  pointer-events: none;
+  overflow: hidden;
+}
+.noopbang-overlay img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.noopbang-overlay.show {
+  display: block;
+}
+
+/* 방송 중 HUD를 오버레이 위에 표시 */
+#game-container.live-broadcast #top-hud { z-index: 15; }
+
+/* 방송 중 하단 버튼: STOP만 보이게 */
+#game-container.live-broadcast #bottom-panel {
+  z-index: 14;
+  justify-content: space-between;
+}
+#game-container.live-broadcast #bottom-panel #btn-closet,
+#game-container.live-broadcast #bottom-panel #btn-touch {
+  display: none;
+}
 </style>
 </head>
 <body>
@@ -1808,12 +2089,14 @@ img {
         <div class="hud-left">
           <div class="status-row">
             <div class="status-icon-slot manager-level" aria-hidden="true"><span class="manager-level-value">5</span></div>
-            <div class="status-ability-label">EXP</div>
-              <div class="status-track">
-                <div class="status-fill life" style="--fill: 72%;"></div>
-                <div class="status-track-value" id="tension-track-value">72/100</div>
-              </div>
-          </div>
+            <div class="status-label-gauge">
+              <div class="status-ability-label">EXP</div>
+                <div class="status-track">
+                  <div class="status-fill relations" style="--fill: 72%;"></div>
+                  <div class="status-track-value" id="relations-track-value">72/100</div>
+                </div>
+              </div>  
+            </div>
           <div class="status-row">
             <div class="status-icon-slot tension" aria-hidden="true"></div>
             <div class="status-label-gauge">
@@ -1828,15 +2111,11 @@ img {
       </div>
       <div class="hud-box right-box">
         <div class="hud-right">
-          <div class="live-title">LIVE SUB</div>
-          <div class="live-board"><div class="live-value">1,234,567M</div></div>
+          <div class="live-board">
+            <div class="live-value"><span>1</span>명</div>
+            <div class="earnings-value"><span>0</span>원</div>
+          </div>
         </div>
-        <div class="status-row">
-          <div class="earnings">
-            <span class="ic">운영 자금</span>
-            <span class="earnings-value">0</span>
-          </div>          
-        </div>        
       </div>
     </div>
 
@@ -1888,7 +2167,7 @@ img {
     <!-- 4 Main Buttons -->
     <div class="main-btns gacha hide-on-touch">
       <div class="mbw">
-        <span class="bub">일일 뽑기 가능!</span>
+        <span class="bub" id="daily-gacha-bubble">일일 뽑기 가능!</span>
         <button class="mb" id="btn-gacha">
           <span class="ic"></span>
           <span class="su">영업</span>
@@ -1903,23 +2182,23 @@ img {
       </div>
     </div>
     <div class="main-btns menu">
-      <div class="mbw hide-on-touch">
-        <button class="mb" id="btn-support">
+      <div class="mbw">
+        <button class="mb" id="btn-touch">
           <span class="ic"></span>
-          <span class="su">서포트</span>
+          <span class="su">소통</span>
+          <span class="su-exit">나가기</span>
         </button>
-      </div>
+      </div>      
       <div class="mbw hide-on-touch">
         <button class="mb" id="btn-closet">
           <span class="ic"></span>
           <span class="su">세팅</span>
         </button>
       </div>
-      <div class="mbw">
-        <button class="mb" id="btn-touch">
+      <div class="mbw hide-on-touch">
+        <button class="mb" id="btn-support">
           <span class="ic"></span>
-          <span class="su">소통</span>
-          <span class="su-exit">나가기</span>
+          <span class="su">서포트</span>
         </button>
       </div>
     </div>
@@ -2017,6 +2296,53 @@ img {
         <button class="gacha-btn-confirm" id="gacha-confirm">확인</button>
       </div>
     </div>
+  </div>
+
+  <!-- ====== BROADCAST MODE MODAL ====== -->
+  <div class="broadcast-mode-backdrop" id="broadcast-mode-backdrop">
+    <div class="broadcast-mode-modal">
+      <button class="broadcast-mode-close" id="broadcast-mode-close">&times;</button>
+      <div class="broadcast-mode-title">방송 테마 선택</div>
+      <div class="broadcast-mode-btns">
+        <button class="broadcast-mode-btn talk" data-mode="talk">
+          <span class="mode-name">소통</span>
+          <span class="mode-stats">자금 × 1.0 / 구독자 × 1.0 / 텐션 소모 × 1.0</span>
+        </button>
+        <button class="broadcast-mode-btn game" data-mode="game">
+          <span class="mode-name">게임</span>
+          <span class="mode-stats">자금 × 0.7 / 구독자 × 2.0 / 텐션 소모 × 1.5</span>
+        </button>
+        <button class="broadcast-mode-btn song" data-mode="song">
+          <span class="mode-name">노래</span>
+          <span class="mode-stats">자금 × 2.0 / 구독자 × 0.5 / 텐션 소모 × 2.0</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== BROADCAST PREP SCREEN ====== -->
+  <div class="broadcast-prep-backdrop" id="broadcast-prep-backdrop">
+    <div class="broadcast-prep-title" id="broadcast-prep-title">방송 준비중...</div>
+    <div class="broadcast-prep-thumbnail" id="broadcast-prep-thumbnail">
+      <!-- 향후 이미지 삽입: <img src="..." alt=""> -->
+    </div>
+    <div class="broadcast-prep-countdown" id="broadcast-prep-countdown">30</div>
+    <div class="broadcast-prep-hint">화면을 터치하면 시간이 단축됩니다</div>
+    <div class="broadcast-prep-btns">
+      <button id="broadcast-prep-cancel">취소</button>
+      <button id="broadcast-prep-theme">방송 테마 변경</button>
+    </div>
+  </div>
+
+  <!-- ====== BROADCAST LIVE OVERLAYS ====== -->
+  <div class="broadcast-dark-overlay broadcast-dark-overlay-top" id="broadcast-dark-top"></div>
+  <div class="broadcast-dark-overlay broadcast-dark-overlay-bottom" id="broadcast-dark-bottom"></div>
+  <div class="broadcast-live-frame-border" id="broadcast-live-frame-border"></div>
+  <div class="broadcast-mode-indicator" id="broadcast-mode-indicator">● LIVE</div>
+
+  <!-- ====== NOOPBANG OVERLAY ====== -->
+  <div class="noopbang-overlay" id="noopbang-overlay">
+    <img id="noopbang-img" src="" alt="눕방" draggable="false">
   </div>
 
   <!-- ====== OFFLINE REWARD MODAL ====== -->
@@ -2366,7 +2692,8 @@ var defaultData = {
     isLive: false,
     tension: 100,
     subscribers: 0,
-    earnings: 0
+    earnings: 0,
+    broadcastMode: 'talk'
   },
   pityCount: 0,
   lastSaveTime: 0,
@@ -2428,6 +2755,7 @@ function loadGame() {
       parsed.dailyFreeGacha = { count: 3, lastResetDate: '' };
     }
     if (!Array.isArray(parsed.ownedCostumes)) parsed.ownedCostumes = [];
+    if (!parsed.streamerStatus.broadcastMode) parsed.streamerStatus.broadcastMode = 'talk';
     return parsed;
   } catch (e) {
     console.warn('[LOAD] 파싱 실패, 기본값 복구:', e);
@@ -2468,6 +2796,10 @@ function normalizeImportedData(parsed) {
     }
     if (typeof incomingStatus.earnings === 'number' && isFinite(incomingStatus.earnings)) {
       safe.streamerStatus.earnings = Math.max(0, incomingStatus.earnings);
+    }
+    if (typeof incomingStatus.broadcastMode === 'string' &&
+        ['talk', 'game', 'song'].indexOf(incomingStatus.broadcastMode) !== -1) {
+      safe.streamerStatus.broadcastMode = incomingStatus.broadcastMode;
     }
   }
 
@@ -2597,6 +2929,19 @@ var GC = {
   SUBS_LOW_PER_SEC:          1 / 180       // 텐션 0~29
 };
 
+// ── 방송 모드별 배율 (전역) ──
+var BROADCAST_MODES = {
+  talk:  { label: '소통', fundMult: 1.0, subsMult: 1.0, tensionMult: 1.0 },
+  game:  { label: '게임',     fundMult: 0.7, subsMult: 2.0, tensionMult: 1.5 },
+  song: { label: '노래',     fundMult: 2.0, subsMult: 0.5, tensionMult: 2.0 }
+};
+var NOOPBANG_MODE = { label: '눕방', fundMult: 0.1, subsMult: 0.25, tensionMult: 1.0 };
+
+function getActiveMode(tension, broadcastMode) {
+  if (tension >= 1 && tension < 30) return NOOPBANG_MODE;
+  return BROADCAST_MODES[broadcastMode] || BROADCAST_MODES.talk;
+}
+
 // =========================================================
 //  오프라인 방치 보상 시뮬레이션
 // =========================================================
@@ -2616,6 +2961,7 @@ function calculateOfflineRewards(sd) {
   var ss = sd.streamerStatus;
   var tension = ss.tension;
   var isLive  = ss.isLive;
+  var broadcastMode = ss.broadcastMode || 'talk';
 
   var totalEarnings = 0;
   var totalSubs     = 0;
@@ -2629,7 +2975,8 @@ function calculateOfflineRewards(sd) {
         isLive = false;
         continue; // 같은 초를 OFF로 재처리
       }
-      tension = clamp(tension - GC.TENSION_DECAY_PER_SEC);
+      var offMode = getActiveMode(tension, broadcastMode);
+      tension = clamp(tension - GC.TENSION_DECAY_PER_SEC * offMode.tensionMult);
 
       var ePer, sPer;
       if (tension >= 90)      { ePer = GC.EARNINGS_FEVER_PER_SEC; sPer = GC.SUBS_FEVER_PER_SEC; }
@@ -2637,8 +2984,8 @@ function calculateOfflineRewards(sd) {
       else if (tension >= 30) { ePer = GC.EARNINGS_MID_PER_SEC;   sPer = GC.SUBS_MID_PER_SEC; }
       else                    { ePer = GC.EARNINGS_LOW_PER_SEC;    sPer = GC.SUBS_LOW_PER_SEC; }
 
-      totalEarnings += ePer;
-      totalSubs     += sPer;
+      totalEarnings += ePer * offMode.fundMult;
+      totalSubs     += sPer * offMode.subsMult;
     } else {
       // OFF: 텐션 회복, 수익 없음
       tension = clamp(tension + GC.TENSION_REGEN_PER_SEC);
@@ -2763,6 +3110,9 @@ function showOfflineRewardPopup(reward, onConfirm, options) {
           $ledText.textContent = saveData.streamerStatus.isLive ? '■STOP' : '▶LIVE';
         }
       }
+      if (typeof window.syncLiveVisualState === 'function') {
+        window.syncLiveVisualState();
+      }
     }
 
     if (reward && reward.wasLive) {
@@ -2785,6 +3135,9 @@ function showOfflineRewardPopup(reward, onConfirm, options) {
     }
 
     syncLiveUI();
+    if (typeof window.syncDailyGachaBubble === 'function') {
+      window.syncDailyGachaBubble();
+    }
     // 자동 저장 시작 (30초마다)
     setInterval(saveGame, 30000);
   });
@@ -3011,12 +3364,14 @@ document.addEventListener('DOMContentLoaded', function() {
   // ── DOM 캐시 ──
   var $tensionFill = document.querySelector('.status-fill.life');
   var $tensionTrackValue = document.getElementById('tension-track-value');
-  var $liveValue   = document.querySelector('.live-value');
-  var $earningsVal = document.querySelector('.earnings-value');
+  var $liveValue   = document.querySelector('.live-value > span');
+  var $earningsVal = document.querySelector('.earnings-value > span');
   var $btnLive     = document.getElementById('btn-live');
   var $ledText     = $btnLive ? $btnLive.querySelector('.led-text') : null;
   var liveSessionSnapshot = null;
   var liveSessionStartAt = 0;
+  var fund_buffer = 0;
+  var sub_buffer = 0;
 
   // ── 클램프 헬퍼 ──
   function clamp(v) {
@@ -3091,6 +3446,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if ($earningsVal) {
       $earningsVal.textContent = formatNumber(saveData.streamerStatus.earnings);
     }
+    // 방송 모드 인디케이터 갱신
+    var $modeInd = document.getElementById('broadcast-mode-indicator');
+    if ($modeInd && saveData.streamerStatus.isLive) {
+      $modeInd.textContent = '● LIVE';
+    }
   }
 
   // ── 1 초 틱 (백그라운드 탭 보정 포함) ──
@@ -3098,23 +3458,26 @@ document.addEventListener('DOMContentLoaded', function() {
     var now = Date.now();
     var deltaSec = Math.floor((now - lastGaugeTickTime) / 1000);
     if (deltaSec <= 0) return;
-    lastGaugeTickTime += deltaSec * 1000; // 소수점 이하 보존
+    lastGaugeTickTime += deltaSec * 1000;
 
-    // 백그라운드 체류 시간 상한: 1시간
     deltaSec = Math.min(deltaSec, 3600);
 
     var ss = saveData.streamerStatus;
+    var wasLiveAtStart = ss.isLive;
+
+    if (ss.isLive && !liveSessionSnapshot) {
+      startLiveSessionSnapshot();
+    }
 
     for (var step = 0; step < deltaSec; step++) {
       if (ss.isLive) {
         if (ss.tension <= 0) {
           ss.isLive = false;
-          if ($ledText) $ledText.textContent = '▶LIVE';
-          if ($btnLive) $btnLive.classList.remove('is-live');
-          break;
+          continue;
         }
 
-        ss.tension = clamp(ss.tension - GC.TENSION_DECAY_PER_SEC * TEST_TIME_SCALE);
+        var activeMode = getActiveMode(ss.tension, ss.broadcastMode || 'talk');
+        ss.tension = clamp(ss.tension - GC.TENSION_DECAY_PER_SEC * activeMode.tensionMult * TEST_TIME_SCALE);
 
         var earningsPerSec, subsPerSec;
         if (ss.tension >= 90) {
@@ -3131,52 +3494,265 @@ document.addEventListener('DOMContentLoaded', function() {
           subsPerSec = GC.SUBS_LOW_PER_SEC;
         }
 
-        ss.earnings += earningsPerSec * TEST_TIME_SCALE;
-        ss.subscribers += subsPerSec * TEST_TIME_SCALE;
+        var earnGain = earningsPerSec * activeMode.fundMult * TEST_TIME_SCALE;
+        var subsGain = subsPerSec * activeMode.subsMult * TEST_TIME_SCALE;
+        fund_buffer += earnGain;
+        sub_buffer += subsGain;
+        var fundInt = Math.floor(fund_buffer);
+        var subInt = Math.floor(sub_buffer);
+        if (fundInt >= 1) { ss.earnings += fundInt; fund_buffer -= fundInt; }
+        if (subInt >= 1) { ss.subscribers += subInt; sub_buffer -= subInt; }
       } else {
         ss.tension = clamp(ss.tension + GC.TENSION_REGEN_PER_SEC * TEST_TIME_SCALE);
       }
     }
 
+    // 방송 중 텐션 0으로 강제 종료 감지
+    if (wasLiveAtStart && !ss.isLive) {
+      var forceReward = buildStopSettlementReward();
+      liveSessionSnapshot = null;
+      liveSessionStartAt = 0;
+      fund_buffer = 0;
+      sub_buffer = 0;
+      if ($ledText) $ledText.textContent = '▶LIVE';
+      if ($btnLive) $btnLive.classList.remove('is-live');
+      exitLiveBroadcastView();
+      showOfflineRewardPopup(forceReward, null, {
+        title: '방송 정산',
+        showDuration: true,
+        showStatus: true
+      });
+    }
+
+    // 눕방 상태 감지 (텐션 30 미만이면 눕방 이미지, 아닌면 캐릭터)
+    if (ss.isLive) {
+      var isNoopbang = ss.tension >= 1 && ss.tension < 30;
+      var $noopbang = document.getElementById('noopbang-overlay');
+      var $charWrap = document.querySelector('.character-wrapper');
+      if ($noopbang) $noopbang.classList.toggle('show', isNoopbang);
+      if ($charWrap) $charWrap.style.visibility = isNoopbang ? 'hidden' : 'visible';
+    }
+
     updateGaugeUI();
   }
+
+  // ── 방송 모드 선택 & 준비 화면 & 16:9 연출 ──
+  var countdownInterval = null;
+  var countdownTime = 60;
+  var lastPrepClickTime = 0;
+  var CLICK_COOLDOWN = 100;
+
+  function openBroadcastModeModal() {
+    document.getElementById('broadcast-mode-backdrop').classList.add('show');
+  }
+
+  function closeBroadcastModeModal() {
+    document.getElementById('broadcast-mode-backdrop').classList.remove('show');
+  }
+
+  function startCountdown(mode) {
+    saveData.streamerStatus.broadcastMode = mode;
+    countdownTime = 30;
+    lastPrepClickTime = 0;
+
+    var $prep = document.getElementById('broadcast-prep-backdrop');
+    var $cd = document.getElementById('broadcast-prep-countdown');
+    var $ml = document.getElementById('broadcast-prep-mode-label');
+    var $prepTitle = document.getElementById('broadcast-prep-title');
+    var modeLabel = (BROADCAST_MODES[mode] || BROADCAST_MODES.talk).label;
+    if ($ml) $ml.textContent = modeLabel;
+    if ($prepTitle) $prepTitle.textContent = modeLabel + ' 방송 준비중...';
+    $cd.textContent = countdownTime;
+    $prep.classList.add('show');
+    closeBroadcastModeModal();
+
+    if (countdownInterval) clearInterval(countdownInterval);
+    countdownInterval = setInterval(function() {
+      countdownTime--;
+      $cd.textContent = Math.max(0, countdownTime);
+      if (countdownTime <= 0) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+        $prep.classList.remove('show');
+        startBroadcast(mode);
+      }
+    }, 1000);
+  }
+
+  function handlePrepClick(e) {
+    if (e.target.closest('.broadcast-prep-btns')) return;
+    var now = Date.now();
+    if (now - lastPrepClickTime < CLICK_COOLDOWN) return;
+    lastPrepClickTime = now;
+    countdownTime = Math.max(0, countdownTime - 1);
+    var $cd = document.getElementById('broadcast-prep-countdown');
+    if ($cd) $cd.textContent = Math.max(0, countdownTime);
+  }
+
+  function cancelCountdown() {
+    if (countdownInterval) {
+      clearInterval(countdownInterval);
+      countdownInterval = null;
+    }
+    document.getElementById('broadcast-prep-backdrop').classList.remove('show');
+  }
+
+  function goBackToModeSelect() {
+    cancelCountdown();
+    openBroadcastModeModal();
+  }
+
+  function startBroadcast(mode) {
+    var ss = saveData.streamerStatus;
+    ss.isLive = true;
+    ss.broadcastMode = mode;
+    fund_buffer = 0;
+    sub_buffer = 0;
+    startLiveSessionSnapshot();
+    enterLiveBroadcastView(mode);
+    if ($ledText) $ledText.textContent = '■STOP';
+    if ($btnLive) $btnLive.classList.add('is-live');
+  }
+
+  function stopBroadcast() {
+    gaugeTick();
+    var ss = saveData.streamerStatus;
+    var reward = buildStopSettlementReward();
+    ss.isLive = false;
+    liveSessionSnapshot = null;
+    liveSessionStartAt = 0;
+    fund_buffer = 0;
+    sub_buffer = 0;
+    if ($ledText) $ledText.textContent = '▶LIVE';
+    if ($btnLive) $btnLive.classList.remove('is-live');
+    exitLiveBroadcastView();
+    showOfflineRewardPopup(reward, null, {
+      title: '방송 정산',
+      showDuration: true,
+      showStatus: false
+    });
+  }
+
+  function enterLiveBroadcastView(mode) {
+    var $gc = document.getElementById('game-container');
+    $gc.classList.add('live-broadcast');
+    var $modeInd = document.getElementById('broadcast-mode-indicator');
+    if ($modeInd) $modeInd.textContent = '● LIVE';
+    updateLiveOverlays();
+  }
+
+  function exitLiveBroadcastView() {
+    var $gc = document.getElementById('game-container');
+    $gc.classList.remove('live-broadcast');
+    // 캐릭터 클리핑 해제
+    var $charWrap = document.querySelector('.character-wrapper');
+    if ($charWrap) { $charWrap.style.clipPath = ''; $charWrap.style.visibility = 'visible'; }
+    // 눕방 오버레이 해제
+    var $noopbang = document.getElementById('noopbang-overlay');
+    if ($noopbang) $noopbang.classList.remove('show');
+  }
+
+  function updateLiveOverlays() {
+    var $gc = document.getElementById('game-container');
+    var w = $gc.clientWidth;
+    var h = $gc.clientHeight;
+    var frameH = w * 9 / 16;
+    var barH = Math.max(0, (h - frameH) / 2);
+    var $top = document.getElementById('broadcast-dark-top');
+    var $bot = document.getElementById('broadcast-dark-bottom');
+    var $frame = document.getElementById('broadcast-live-frame-border');
+    if ($top) $top.style.height = barH + 'px';
+    if ($bot) $bot.style.height = barH + 'px';
+    if ($frame) $frame.style.height = frameH + 'px';
+    // 캐릭터를 16:9 프레임 영역에 클리핑
+    var $charWrap = document.querySelector('.character-wrapper');
+    if ($charWrap) {
+      $charWrap.style.clipPath = 'inset(' + barH + 'px 0px ' + barH + 'px 0px)';
+    }
+    // 모드 인디케이터 위치를 프레임 내부 좌상단에
+    var $ind = document.getElementById('broadcast-mode-indicator');
+    if ($ind) {
+      $ind.style.top = (barH + 8) + 'px';
+      $ind.style.left = '8px';
+    }
+  }
+
+  function syncLiveVisualState() {
+    var ss = saveData.streamerStatus;
+    if ($ledText) {
+      $ledText.textContent = ss.isLive ? '■STOP' : '▶LIVE';
+    }
+    if ($btnLive) {
+      $btnLive.classList.toggle('is-live', !!ss.isLive);
+    }
+    if (ss.isLive) {
+      if (!liveSessionSnapshot) startLiveSessionSnapshot();
+      enterLiveBroadcastView(ss.broadcastMode || 'talk');
+    } else {
+      exitLiveBroadcastView();
+    }
+    updateGaugeUI();
+  }
+
+  window.syncLiveVisualState = syncLiveVisualState;
 
   // ── LIVE 토글 (btn-live 클릭) ──
   function toggleLive() {
     var ss = saveData.streamerStatus;
-
     if (!ss.isLive) {
-      ss.isLive = true;
-      startLiveSessionSnapshot();
+      openBroadcastModeModal();
     } else {
-      var reward = buildStopSettlementReward();
-      ss.isLive = false;
-      liveSessionSnapshot = null;
-      liveSessionStartAt = 0;
-      showOfflineRewardPopup(reward, null, {
-        title: '방송 정산',
-        showDuration: true,
-        showStatus: false
-      });
-    }
-
-    // LED 텍스트 반영
-    if ($ledText) {
-      $ledText.textContent = ss.isLive ? '■STOP' : '▶LIVE';
-    }
-    // 버튼 시각 상태
-    if ($btnLive) {
-      $btnLive.classList.toggle('is-live', ss.isLive);
+      stopBroadcast();
     }
   }
+
+  // ── 방송 모드 선택 이벤트 ──
+  var $bmBtns = document.querySelectorAll('.broadcast-mode-btn');
+  for (var bi = 0; bi < $bmBtns.length; bi++) {
+    (function(btn) {
+      btn.addEventListener('click', function() {
+        var mode = btn.getAttribute('data-mode');
+        if (mode) startCountdown(mode);
+      });
+    })($bmBtns[bi]);
+  }
+
+  var $bmClose = document.getElementById('broadcast-mode-close');
+  if ($bmClose) $bmClose.addEventListener('click', closeBroadcastModeModal);
+
+  var $bmBackdrop = document.getElementById('broadcast-mode-backdrop');
+  if ($bmBackdrop) $bmBackdrop.addEventListener('click', function(e) {
+    if (e.target === $bmBackdrop) closeBroadcastModeModal();
+  });
+
+  // ── 준비 화면 이벤트 ──
+  var $prepBackdrop = document.getElementById('broadcast-prep-backdrop');
+  if ($prepBackdrop) $prepBackdrop.addEventListener('click', handlePrepClick);
+
+  var $prepCancel = document.getElementById('broadcast-prep-cancel');
+  if ($prepCancel) $prepCancel.addEventListener('click', function(e) {
+    e.stopPropagation();
+    cancelCountdown();
+  });
+
+  var $prepTheme = document.getElementById('broadcast-prep-theme');
+  if ($prepTheme) $prepTheme.addEventListener('click', function(e) {
+    e.stopPropagation();
+    goBackToModeSelect();
+  });
 
   if ($btnLive) {
     $btnLive.addEventListener('click', toggleLive);
   }
 
-  if (saveData.streamerStatus.isLive) {
-    startLiveSessionSnapshot();
-  }
+  // ── 방송 복귀 처리 (저장 데이터에서 방송 중이었을 때) ──
+  syncLiveVisualState();
+
+  window.addEventListener('resize', function() {
+    if (document.getElementById('game-container').classList.contains('live-broadcast')) {
+      updateLiveOverlays();
+    }
+  });
 
   // ── 초기 UI 반영 & 엔진 시작 ──
   updateGaugeUI();
@@ -3236,6 +3812,7 @@ function checkAndResetDailyFreeGacha() {
   var $pullSmartLabel = $pullSmartBtn ? $pullSmartBtn.querySelector('.btn-label') : null;
   var $pullOneCostValue = $pullOneBtn ? $pullOneBtn.querySelector('.cost-value') : null;
   var $pullSmartCostValue = $pullSmartBtn ? $pullSmartBtn.querySelector('.cost-value') : null;
+  var $dailyGachaBubble = document.getElementById('daily-gacha-bubble');
 
   // Result DOM
   var $backdrop = document.getElementById('gacha-backdrop');
@@ -3278,11 +3855,22 @@ function checkAndResetDailyFreeGacha() {
     return Math.max(0, Math.floor(value || 0)).toLocaleString('ko-KR');
   }
 
+  function syncDailyGachaBubble() {
+    if (!$dailyGachaBubble) return;
+    checkAndResetDailyFreeGacha();
+    var freeCount = saveData.dailyFreeGacha ? saveData.dailyFreeGacha.count : 0;
+    $dailyGachaBubble.style.display = freeCount >= 1 ? 'inline-block' : 'none';
+  }
+
+  window.syncDailyGachaBubble = syncDailyGachaBubble;
+
   function updateEntryButtons() {
     checkAndResetDailyFreeGacha();
     var earnings = Math.max(0, Math.floor(saveData.streamerStatus.earnings || 0));
     var freeCount = saveData.dailyFreeGacha ? saveData.dailyFreeGacha.count : 0;
     var smartPreset = getSmartPullPreset(earnings);
+
+    syncDailyGachaBubble();
 
     setEntryButtonState(
       $pullOneBtn,
@@ -3349,14 +3937,17 @@ function checkAndResetDailyFreeGacha() {
     return { item: result, type: 'CONSUMABLE' };
   }
 
-  function executeGacha(pullCount) {
+  function executeGacha(pullCount, shouldUpdatePity) {
     var results = [];
     for (var i = 0; i < pullCount; i++) {
-      saveData.pityCount = (saveData.pityCount || 0) + 1;
-      var forceCostume = saveData.pityCount >= PITY_THRESHOLD;
+      var forceCostume = false;
+      if (shouldUpdatePity) {
+        saveData.pityCount = (saveData.pityCount || 0) + 1;
+        forceCostume = saveData.pityCount >= PITY_THRESHOLD;
+      }
       var roll = rollOnce(forceCostume);
 
-      if (roll.type === 'COSTUME') {
+      if (shouldUpdatePity && roll.type === 'COSTUME') {
         saveData.pityCount = 0;
       }
 
@@ -3436,6 +4027,11 @@ function checkAndResetDailyFreeGacha() {
     $pityInfo.textContent = '의상 확정까지 ' + remain + '회 남음';
   }
 
+  function setPityInfoVisible(visible) {
+    if (!$pityInfo) return;
+    $pityInfo.style.display = visible ? 'block' : 'none';
+  }
+
   function updateBottomButtons() {
     var shouldShowRetry = (lastPullCount === 1 || lastPullCount === 10);
 
@@ -3462,6 +4058,7 @@ function checkAndResetDailyFreeGacha() {
 
   function revealSequence(slots) {
     isAnimating = true;
+    setPityInfoVisible(false);
     $bottomBtns.classList.remove('show');
     revealTimers = [];
 
@@ -3479,6 +4076,7 @@ function checkAndResetDailyFreeGacha() {
   function finishReveal() {
     isAnimating = false;
     updatePityInfo();
+    setPityInfoVisible(true);
     updateBottomButtons();
   }
 
@@ -3503,6 +4101,8 @@ function checkAndResetDailyFreeGacha() {
       totalCost = 0;
     }
 
+    syncDailyGachaBubble();
+
     if (!usedFree && ss.earnings < totalCost) {
       alert('방송 자금이 부족합니다! (필요: ' + totalCost + ')');
       return false;
@@ -3518,8 +4118,10 @@ function checkAndResetDailyFreeGacha() {
     // 재화 차감 직후 저장
     saveGame();
 
-    var results = executeGacha(pullCount);
+    var results = executeGacha(pullCount, !usedFree);
     applyResults(results);
+
+    syncDailyGachaBubble();
 
     // 결과 반영 완료 저장
     saveGame();
@@ -3539,6 +4141,7 @@ function checkAndResetDailyFreeGacha() {
   }
 
   function openResultModal() {
+    setPityInfoVisible(false);
     $backdrop.classList.add('show');
   }
 
@@ -3549,6 +4152,7 @@ function checkAndResetDailyFreeGacha() {
     $backdrop.classList.remove('show');
     $bottomBtns.classList.remove('show');
     $bottomBtns.classList.remove('confirm-only');
+    setPityInfoVisible(false);
     $grid.innerHTML = '';
   }
 

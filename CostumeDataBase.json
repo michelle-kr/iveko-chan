@@ -1,28 +1,82 @@
 {
   "costumes": [
     {
-      "id": "cos_head_crown_01",
-      "name": "황금 왕관",
+      "id": "costume_head_01",
+      "name": "저렴한 헤드셋",
       "part": "head",
-      "set_id": "set_royal_01",
+      "set_id": "",
+      "buffType": "FUND_GAIN",
+      "buffValue": 0,
+      "grade": "COMMON"
+    },
+    {
+      "id": "costume_body_01",
+      "name": "인벤녀 기본 복장",
+      "part": "body",
+      "set_id": "",
+      "buffType": "SUB_GAIN",
+      "buffValue": 0,
+      "grade": "COMMON"
+    },
+    {
+      "id": "costume_head_02",
+      "name": "게이밍 헤드셋",
+      "part": "head",
+      "set_id": "set_01",
       "buffType": "FUND_GAIN",
       "buffValue": 0.10,
+      "grade": "COMMON"
+    },
+    {
+      "id": "costume_body_02",
+      "name": "헐렁한 후드티",
+      "part": "body",
+      "set_id": "set_01",
+      "buffType": "SUB_GAIN",
+      "buffValue": 0.10,
+      "grade": "COMMON"
+    },
+    {
+      "id": "costume_head_03",
+      "name": "룸웨어 리본 머리띠",
+      "part": "head",
+      "set_id": "set_02",
+      "buffType": "FUND_GAIN",
+      "buffValue": 0.25,
       "grade": "RARE"
     },
     {
-      "id": "cos_body_dress_01",
-      "name": "이브닝 드레스",
+      "id": "costume_body_03",
+      "name": "니트 가디건&룸웨어",
       "part": "body",
-      "set_id": "set_royal_01",
+      "set_id": "set_02",
       "buffType": "SUB_GAIN",
-      "buffValue": 0.15,
+      "buffValue": 0.25,
       "grade": "RARE"
+    },
+    {
+      "id": "costume_head_05",
+      "name": "프릴 헤드드레스",
+      "part": "head",
+      "set_id": "set_04",
+      "buffType": "FUND_GAIN",
+      "buffValue": 0.50,
+      "grade": "LEGENDARY"
+    },
+    {
+      "id": "costume_body_05",
+      "name": "심플 메이드복",
+      "part": "body",
+      "set_id": "set_04",
+      "buffType": "SUB_GAIN",
+      "buffValue": 0.50,
+      "grade": "LEGENDARY"
     }
   ],
   "set_bonuses": [
     {
-      "set_id": "set_royal_01",
-      "name": "로열 패밀리의 품격",
+      "set_id": "set_01",
+      "name": "초보 스트리머",
       "required_count": 2,
       "buffType": "TENSION_DECAY_DOWN",
       "buffValue": 0.20
