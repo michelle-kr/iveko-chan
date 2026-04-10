@@ -436,7 +436,7 @@ img {
   left: 50%;
   transform: translateX(-50%) scaleY(1);
   transform-origin: bottom center;
-  height: 70%;
+  height: 75%;
   aspect-ratio: 1 / 1;
   z-index: 5;
   pointer-events: none;
@@ -451,6 +451,8 @@ img {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 #layer-hair-back {
@@ -892,7 +894,7 @@ img {
 /* 배경+캐릭터 줌인 */
 #top-area {
   transition: transform 0.5s ease;
-  transform-origin: 50% 35%; /* Y값을 키우면 포커스가 아래로 내려감 */
+  transform-origin: 50% 30%; /* Y값을 키우면 포커스가 아래로 내려감 */
 }
 #game-container.touch-mode #top-area {
   transform: scale(2.5);
@@ -2028,8 +2030,10 @@ img {
 
 /* 방송 중 캐릭터 클로즈업 */
 #game-container.live-broadcast #character-container {
-  transform: translateX(-50%) scale(2.0);
-  bottom: -50%;  /* ← 방송 중 캐릭터 위치: 이 값을 변경하세요 */
+  /* scale 확대 대신 실제 렌더 크기를 키워 합성 후 리샘플링을 줄인다 */
+  height: 112.5%;
+  transform: translate3d(-50%, 0, 0);
+  bottom: -30%;  /* ← 방송 중 캐릭터 위치: 이 값을 변경하세요 */
   /* animation은 유지 — 호흡 애니메이션 + 머리카락 등 계속 재생 */
 }
 
@@ -2067,6 +2071,253 @@ img {
 #game-container.live-broadcast #bottom-panel #btn-touch {
   display: none;
 }
+
+/* ===== Wardrobe (Setting/Closet) ===== */
+#layer-head { z-index: 50; }
+
+.wardrobe-backdrop {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  background: linear-gradient(180deg, #0d0a16 0%, #1a1528 100%);
+  flex-direction: column;
+}
+.wardrobe-backdrop.show { display: flex; }
+
+.wardrobe-preview {
+  flex: 5;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at 50% 60%, rgba(60, 30, 80, 0.4), transparent);
+}
+
+.wardrobe-char-container {
+  position: relative;
+  height: 100%;
+  bottom: 4%;
+  aspect-ratio: 1 / 1;
+}
+.wardrobe-char-container img {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  object-fit: contain;
+}
+.wardrobe-char-container #wardrobe-hair-back { z-index: 10; }
+.wardrobe-char-container #wardrobe-body { z-index: 20; }
+.wardrobe-char-container #wardrobe-face { z-index: 30; }
+.wardrobe-char-container #wardrobe-clothes { z-index: 40; }
+.wardrobe-char-container #wardrobe-head { z-index: 50; }
+
+.wardrobe-set-info {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 12px;
+  border-radius: 8px;
+  background: rgba(255, 200, 50, 0.15);
+  border: 1px solid rgba(255, 200, 50, 0.4);
+  color: #ffcc66;
+  font-family: 'DosGothic', 'Noto Sans KR', sans-serif;
+  font-size: 11px;
+  text-shadow: 0 0 4px rgba(255, 200, 60, 0.3);
+  white-space: nowrap;
+  display: none;
+}
+.wardrobe-set-info.show { display: block; }
+
+.wardrobe-panel {
+  flex: 4;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #14101f, #0d0a16);
+  border-top: 1px solid rgba(200, 140, 255, 0.3);
+  padding: 8px 12px 12px;
+  gap: 6px;
+  overflow: hidden;
+}
+
+.wardrobe-tabs {
+  display: flex;
+  gap: 6px;
+}
+.wardrobe-tab {
+  padding: 6px 16px;
+  border: 1px solid rgba(200, 160, 255, 0.3);
+  border-radius: 8px;
+  background: rgba(40, 30, 60, 0.5);
+  color: #b8a0cc;
+  font-family: 'Orbitron', 'DosGothic', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.wardrobe-tab.active {
+  background: rgba(160, 80, 240, 0.3);
+  border-color: rgba(200, 140, 255, 0.7);
+  color: #e0c0ff;
+}
+.wardrobe-tab:active { transform: scale(0.97); }
+
+.wardrobe-filters {
+  display: flex;
+  gap: 4px;
+}
+.wardrobe-filter {
+  padding: 4px 10px;
+  border: 1px solid rgba(180, 160, 200, 0.25);
+  border-radius: 6px;
+  background: transparent;
+  color: #9987ad;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.wardrobe-filter.active {
+  background: rgba(200, 180, 220, 0.15);
+  color: #d0b8e8;
+  border-color: rgba(200, 180, 220, 0.45);
+}
+
+.wardrobe-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.wardrobe-slot {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  border: 1.5px solid rgba(180, 140, 220, 0.4);
+  background: rgba(30, 28, 40, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.2s, border-color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+}
+.wardrobe-slot:active { transform: scale(0.93); }
+.wardrobe-slot.grade-common {
+  background: linear-gradient(135deg, rgba(180,180,190,0.15), rgba(140,140,155,0.08));
+}
+.wardrobe-slot.grade-rare {
+  background: linear-gradient(135deg, rgba(100,160,255,0.2), rgba(80,130,220,0.08));
+  border-color: rgba(100,160,255,0.5);
+}
+.wardrobe-slot.grade-legendary {
+  background: linear-gradient(135deg, rgba(255,210,80,0.25), rgba(220,170,50,0.1));
+  border-color: rgba(255,210,80,0.6);
+  box-shadow: 0 0 8px rgba(255,200,60,0.2);
+}
+.wardrobe-slot.not-owned {
+  filter: grayscale(100%);
+  opacity: 0.4;
+  cursor: default;
+  pointer-events: none;
+}
+.wardrobe-slot.equipped {
+  border-color: rgba(100, 255, 180, 0.7);
+  box-shadow: 0 0 8px rgba(100, 255, 180, 0.3);
+}
+.wardrobe-slot.previewing {
+  border-color: rgba(255, 200, 50, 0.8);
+  box-shadow: 0 0 10px rgba(255, 200, 50, 0.35);
+}
+.wardrobe-slot-icon {
+  width: 65%;
+  height: 65%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+.wardrobe-slot-name {
+  font-size: 8px;
+  color: #b8a0cc;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 90%;
+  margin-top: 2px;
+}
+.wardrobe-slot-buff {
+  font-size: 8px;
+  color: #ffcc66;
+  text-shadow: 0 0 3px rgba(255, 200, 60, 0.3);
+}
+
+.wardrobe-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding-top: 6px;
+  border-top: 1px solid rgba(200, 140, 255, 0.15);
+}
+.wardrobe-btn-cancel,
+.wardrobe-btn-confirm {
+  padding: 10px 0;
+  border-radius: 12px;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  flex: 1;
+}
+.wardrobe-btn-cancel:active,
+.wardrobe-btn-confirm:active { transform: scale(0.95); }
+.wardrobe-btn-cancel {
+  background: rgba(200, 180, 220, 0.15);
+  color: #b8a0cc;
+  border: 1px solid rgba(200, 180, 220, 0.3);
+}
+.wardrobe-btn-confirm {
+  background: linear-gradient(135deg, #b06cff, #8a3fdf);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(160, 80, 240, 0.35);
+}
+
+.wardrobe-daily-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+}
+.wardrobe-daily-label input[type="checkbox"] {
+  accent-color: #b06cff;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+.wardrobe-daily-label span {
+  font-size: 10px;
+  color: #d0b8e8;
+  font-weight: 600;
+}
+.wardrobe-daily-label.disabled {
+  opacity: 0.4;
+  cursor: default;
+  pointer-events: none;
+}
 </style>
 </head>
 <body>
@@ -2092,8 +2343,8 @@ img {
             <div class="status-label-gauge">
               <div class="status-ability-label">EXP</div>
                 <div class="status-track">
-                  <div class="status-fill relations" style="--fill: 72%;"></div>
-                  <div class="status-track-value" id="relations-track-value">72/100</div>
+                  <div class="status-fill relations" style="--fill: 0%;"></div>
+                  <div class="status-track-value" id="relations-track-value">/100</div>
                 </div>
               </div>  
             </div>
@@ -2102,8 +2353,8 @@ img {
             <div class="status-label-gauge">
               <div class="status-ability-label">TENSION</div>
               <div class="status-track">
-                <div class="status-fill life" style="--fill: 72%;"></div>
-                <div class="status-track-value" id="tension-track-value">72/100</div>
+                <div class="status-fill life" style="--fill: 0%;"></div>
+                <div class="status-track-value" id="tension-track-value">/100</div>
               </div>
             </div>
           </div>
@@ -2125,7 +2376,8 @@ img {
         <img id="layer-hair-back" src="assets/hair_back_default.png" alt="" draggable="false">
         <img id="layer-body" src="assets/body_base.png" alt="" draggable="false">
         <img id="layer-face" src="assets/face_default.png" alt="" draggable="false">
-        <img id="layer-clothes" src="assets/clothes_default.png" alt="" draggable="false">
+        <img id="layer-clothes" src="assets/costume_body_01.png" alt="" draggable="false">
+        <img id="layer-head" src="" alt="" draggable="false" style="display:none">
       </div>
     </div>
     <!-- SVG 하드라이트 필터 정의: 원하는 색상으로 flood-color 수정 가능 -->
@@ -2351,6 +2603,39 @@ img {
       <div class="offline-title">부재중 방송 정산</div>
       <div class="offline-summary" id="offline-summary"></div>
       <button class="offline-confirm" id="offline-confirm">확인</button>
+    </div>
+  </div>
+
+  <!-- ====== WARDROBE (SETTING) MODAL ====== -->
+  <div class="wardrobe-backdrop" id="wardrobe-backdrop">
+    <div class="wardrobe-preview">
+      <div class="wardrobe-char-container">
+        <img id="wardrobe-hair-back" src="assets/hair_back_default.png" alt="" draggable="false">
+        <img id="wardrobe-body" src="assets/body_base.png" alt="" draggable="false">
+        <img id="wardrobe-face" src="assets/face_default.png" alt="" draggable="false">
+        <img id="wardrobe-clothes" src="" alt="" draggable="false">
+        <img id="wardrobe-head" src="" alt="" draggable="false" style="display:none">
+      </div>
+      <div class="wardrobe-set-info" id="wardrobe-set-info"></div>
+    </div>
+    <div class="wardrobe-panel">
+      <div class="wardrobe-tabs">
+        <button class="wardrobe-tab active" data-tab="head">HEAD</button>
+        <button class="wardrobe-tab" data-tab="body">BODY</button>
+      </div>
+      <div class="wardrobe-filters">
+        <button class="wardrobe-filter active" data-filter="all">전체</button>
+        <button class="wardrobe-filter" data-filter="owned">보유 중</button>
+      </div>
+      <div class="wardrobe-grid" id="wardrobe-grid"></div>
+      <div class="wardrobe-controls">
+        <button class="wardrobe-btn-cancel" id="wardrobe-cancel">취소</button>
+        <label class="wardrobe-daily-label" id="wardrobe-daily-label">
+          <input type="checkbox" id="wardrobe-daily-check">
+          <span>데일리 스타일링</span>
+        </label>
+        <button class="wardrobe-btn-confirm" id="wardrobe-confirm">확인</button>
+      </div>
     </div>
   </div>
 
@@ -2688,6 +2973,8 @@ $container.addEventListener('click', function(e) {
 var SAVE_KEY = 'ibeco_save';
 
 var defaultData = {
+  managerLevel: 1,
+  currentExp: 0,
   streamerStatus: {
     isLive: false,
     tension: 100,
@@ -2698,7 +2985,10 @@ var defaultData = {
   pityCount: 0,
   lastSaveTime: 0,
   dailyFreeGacha: { count: 3, lastResetDate: '' },
-  ownedCostumes: [],
+  ownedCostumes: ['costume_body_01', 'costume_body_03'],
+  equippedHead: '',
+  equippedBody: 'costume_body_01',
+  dailyStylingDate: '',
   inventory: {
     consumables: [
       { id: 'itm_food_01', quantity: 12 },
@@ -2749,12 +3039,34 @@ function loadGame() {
       return getDefaultData();
     }
     // 신규 필드 마이그레이션
+    if (typeof parsed.managerLevel !== 'number') {
+      if (parsed.player && typeof parsed.player.managerLevel === 'number') {
+        parsed.managerLevel = parsed.player.managerLevel;
+      } else {
+        parsed.managerLevel = 1;
+      }
+    }
+    parsed.managerLevel = Math.max(1, Math.floor(parsed.managerLevel));
+
+    if (typeof parsed.currentExp !== 'number') {
+      if (parsed.player && typeof parsed.player.currentExp === 'number') {
+        parsed.currentExp = parsed.player.currentExp;
+      } else {
+        parsed.currentExp = 0;
+      }
+    }
+    parsed.currentExp = Math.max(0, Math.floor(parsed.currentExp));
+    if (typeof parsed.equippedHead !== 'string') parsed.equippedHead = '';
+    if (typeof parsed.equippedBody !== 'string') parsed.equippedBody = 'costume_body_01';
+    if (typeof parsed.dailyStylingDate !== 'string') parsed.dailyStylingDate = '';
     if (typeof parsed.pityCount !== 'number') parsed.pityCount = 0;
     if (typeof parsed.lastSaveTime !== 'number') parsed.lastSaveTime = 0;
     if (!parsed.dailyFreeGacha || typeof parsed.dailyFreeGacha !== 'object') {
       parsed.dailyFreeGacha = { count: 3, lastResetDate: '' };
     }
     if (!Array.isArray(parsed.ownedCostumes)) parsed.ownedCostumes = [];
+    if (parsed.ownedCostumes.indexOf('costume_body_01') === -1) parsed.ownedCostumes.push('costume_body_01');
+    if (parsed.ownedCostumes.indexOf('costume_body_03') === -1) parsed.ownedCostumes.push('costume_body_03');
     if (!parsed.streamerStatus.broadcastMode) parsed.streamerStatus.broadcastMode = 'talk';
     return parsed;
   } catch (e) {
@@ -2784,6 +3096,18 @@ function isValidImportData(parsed) {
 
 function normalizeImportedData(parsed) {
   var safe = getDefaultData();
+
+  if (typeof parsed.managerLevel === 'number' && isFinite(parsed.managerLevel)) {
+    safe.managerLevel = Math.max(1, Math.floor(parsed.managerLevel));
+  } else if (parsed.player && typeof parsed.player.managerLevel === 'number' && isFinite(parsed.player.managerLevel)) {
+    safe.managerLevel = Math.max(1, Math.floor(parsed.player.managerLevel));
+  }
+
+  if (typeof parsed.currentExp === 'number' && isFinite(parsed.currentExp)) {
+    safe.currentExp = Math.max(0, Math.floor(parsed.currentExp));
+  } else if (parsed.player && typeof parsed.player.currentExp === 'number' && isFinite(parsed.player.currentExp)) {
+    safe.currentExp = Math.max(0, Math.floor(parsed.player.currentExp));
+  }
 
   if (parsed && parsed.streamerStatus && typeof parsed.streamerStatus === 'object') {
     var incomingStatus = parsed.streamerStatus;
@@ -2826,6 +3150,12 @@ function normalizeImportedData(parsed) {
       return typeof id === 'string' && id.length > 0;
     });
   }
+  if (safe.ownedCostumes.indexOf('costume_body_01') === -1) safe.ownedCostumes.push('costume_body_01');
+  if (safe.ownedCostumes.indexOf('costume_body_03') === -1) safe.ownedCostumes.push('costume_body_03');
+
+  if (typeof parsed.equippedHead === 'string') safe.equippedHead = parsed.equippedHead;
+  if (typeof parsed.equippedBody === 'string') safe.equippedBody = parsed.equippedBody;
+  if (typeof parsed.dailyStylingDate === 'string') safe.dailyStylingDate = parsed.dailyStylingDate;
 
   if (parsed.inventory && Array.isArray(parsed.inventory.consumables)) {
     safe.inventory.consumables = parsed.inventory.consumables
@@ -2966,6 +3296,7 @@ function calculateOfflineRewards(sd) {
   var totalEarnings = 0;
   var totalSubs     = 0;
   var remaining     = elapsedSec;
+  var offBuff = getCostumeBuffs(sd);
 
   // 1초 단위 시뮬레이션
   while (remaining > 0) {
@@ -2976,7 +3307,7 @@ function calculateOfflineRewards(sd) {
         continue; // 같은 초를 OFF로 재처리
       }
       var offMode = getActiveMode(tension, broadcastMode);
-      tension = clamp(tension - GC.TENSION_DECAY_PER_SEC * offMode.tensionMult);
+      tension = clamp(tension - GC.TENSION_DECAY_PER_SEC * offMode.tensionMult * (1 - offBuff.tensionDecayDown));
 
       var ePer, sPer;
       if (tension >= 90)      { ePer = GC.EARNINGS_FEVER_PER_SEC; sPer = GC.SUBS_FEVER_PER_SEC; }
@@ -2984,8 +3315,8 @@ function calculateOfflineRewards(sd) {
       else if (tension >= 30) { ePer = GC.EARNINGS_MID_PER_SEC;   sPer = GC.SUBS_MID_PER_SEC; }
       else                    { ePer = GC.EARNINGS_LOW_PER_SEC;    sPer = GC.SUBS_LOW_PER_SEC; }
 
-      totalEarnings += ePer * offMode.fundMult;
-      totalSubs     += sPer * offMode.subsMult;
+      totalEarnings += ePer * offMode.fundMult * (1 + offBuff.fundGain);
+      totalSubs     += sPer * offMode.subsMult * (1 + offBuff.subGain);
     } else {
       // OFF: 텐션 회복, 수익 없음
       tension = clamp(tension + GC.TENSION_REGEN_PER_SEC);
@@ -3135,6 +3466,7 @@ function showOfflineRewardPopup(reward, onConfirm, options) {
     }
 
     syncLiveUI();
+    syncCostumeVisuals();
     if (typeof window.syncDailyGachaBubble === 'function') {
       window.syncDailyGachaBubble();
     }
@@ -3154,6 +3486,7 @@ function showOfflineRewardPopup(reward, onConfirm, options) {
 // 동적 데이터 로딩용 전역 변수 선언
 var masterConsumables = [];
 var masterCostumes = [];
+var masterSetBonuses = [];
 
 function ensureArrayData(data, keyCandidates) {
   if (Array.isArray(data)) return data;
@@ -3212,8 +3545,49 @@ function loadMasterData() {
     fetchJsonFromCandidates(['CostumeDataBase.json', 'CostumeDatabase.json']).then(function (data) {
       masterCostumes = ensureArrayData(data, ['costumes', 'items', 'data']);
       if (!Array.isArray(masterCostumes)) masterCostumes = [];
+      if (data && Array.isArray(data.set_bonuses)) masterSetBonuses = data.set_bonuses;
     })
   ]);
+}
+
+// ── 의상 버프 계산 (전역) ──
+function getCostumeBuffs(sd) {
+  sd = sd || saveData;
+  var result = { fundGain: 0, subGain: 0, tensionDecayDown: 0 };
+  if (!sd || !Array.isArray(masterCostumes)) return result;
+  var headId = sd.equippedHead || '';
+  var bodyId = sd.equippedBody || '';
+  var headCostume = headId ? masterCostumes.find(function(c) { return c.id === headId; }) : null;
+  var bodyCostume = bodyId ? masterCostumes.find(function(c) { return c.id === bodyId; }) : null;
+  if (headCostume && headCostume.buffType === 'FUND_GAIN') {
+    result.fundGain = headCostume.buffValue || 0;
+  }
+  if (bodyCostume && bodyCostume.buffType === 'SUB_GAIN') {
+    result.subGain = bodyCostume.buffValue || 0;
+  }
+  if (headCostume && bodyCostume && headCostume.set_id && headCostume.set_id === bodyCostume.set_id) {
+    var setBonus = (masterSetBonuses || []).find(function(s) { return s.set_id === headCostume.set_id; });
+    if (setBonus && setBonus.buffType === 'TENSION_DECAY_DOWN') {
+      result.tensionDecayDown = setBonus.buffValue || 0;
+    }
+  }
+  return result;
+}
+
+// ── 메인 캐릭터 의상 비주얼 동기화 (전역) ──
+function syncCostumeVisuals() {
+  var $clothes = document.getElementById('layer-clothes');
+  var $head = document.getElementById('layer-head');
+  var bodyId = saveData.equippedBody || '';
+  if ($clothes) {
+    if (bodyId) { $clothes.src = 'assets/' + bodyId + '.png'; $clothes.style.display = ''; }
+    else { $clothes.src = ''; $clothes.style.display = 'none'; }
+  }
+  var headId = saveData.equippedHead || '';
+  if ($head) {
+    if (headId) { $head.src = 'assets/' + headId + '.png'; $head.style.display = ''; }
+    else { $head.src = ''; $head.style.display = 'none'; }
+  }
 }
 
 // 게임 시작 전 데이터 로딩 보장
@@ -3364,6 +3738,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // ── DOM 캐시 ──
   var $tensionFill = document.querySelector('.status-fill.life');
   var $tensionTrackValue = document.getElementById('tension-track-value');
+  var $managerLevelValue = document.querySelector('.manager-level-value');
+  var $relationsFill = document.querySelector('.status-fill.relations');
+  var $relationsTrackValue = document.getElementById('relations-track-value');
   var $liveValue   = document.querySelector('.live-value > span');
   var $earningsVal = document.querySelector('.earnings-value > span');
   var $btnLive     = document.getElementById('btn-live');
@@ -3433,6 +3810,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // ── UI 갱신 ──
   function updateGaugeUI() {
+    var managerLevelValue = Math.max(1, Math.floor(saveData.managerLevel || 1));
+    if ($managerLevelValue) {
+      $managerLevelValue.textContent = String(managerLevelValue);
+    }
+
+    var expValue = Math.min(100, Math.max(0, Math.floor(saveData.currentExp || 0)));
+    if ($relationsFill) {
+      $relationsFill.style.setProperty('--fill', expValue + '%');
+    }
+    if ($relationsTrackValue) {
+      $relationsTrackValue.textContent = expValue + '/100';
+    }
+
     var tensionValue = clamp(saveData.streamerStatus.tension);
     if ($tensionFill) {
       $tensionFill.style.setProperty('--fill', tensionValue + '%');
@@ -3464,6 +3854,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var ss = saveData.streamerStatus;
     var wasLiveAtStart = ss.isLive;
+    var costumeBuff = getCostumeBuffs();
 
     if (ss.isLive && !liveSessionSnapshot) {
       startLiveSessionSnapshot();
@@ -3477,7 +3868,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         var activeMode = getActiveMode(ss.tension, ss.broadcastMode || 'talk');
-        ss.tension = clamp(ss.tension - GC.TENSION_DECAY_PER_SEC * activeMode.tensionMult * TEST_TIME_SCALE);
+        ss.tension = clamp(ss.tension - GC.TENSION_DECAY_PER_SEC * activeMode.tensionMult * (1 - costumeBuff.tensionDecayDown) * TEST_TIME_SCALE);
 
         var earningsPerSec, subsPerSec;
         if (ss.tension >= 90) {
@@ -3494,8 +3885,8 @@ document.addEventListener('DOMContentLoaded', function() {
           subsPerSec = GC.SUBS_LOW_PER_SEC;
         }
 
-        var earnGain = earningsPerSec * activeMode.fundMult * TEST_TIME_SCALE;
-        var subsGain = subsPerSec * activeMode.subsMult * TEST_TIME_SCALE;
+        var earnGain = earningsPerSec * activeMode.fundMult * (1 + costumeBuff.fundGain) * TEST_TIME_SCALE;
+        var subsGain = subsPerSec * activeMode.subsMult * (1 + costumeBuff.subGain) * TEST_TIME_SCALE;
         fund_buffer += earnGain;
         sub_buffer += subsGain;
         var fundInt = Math.floor(fund_buffer);
@@ -4227,6 +4618,233 @@ function checkAndResetDailyFreeGacha() {
     $backdrop.addEventListener('click', function (e) {
       if (e.target === $backdrop && !isAnimating) closeResultModal();
     });
+  }
+})();
+
+// =========================================================
+//  옷장(세팅) 시스템 — Wardrobe
+// =========================================================
+(function () {
+  var $wardrobeBackdrop = document.getElementById('wardrobe-backdrop');
+  var $wardrobeGrid = document.getElementById('wardrobe-grid');
+  var $wardrobeCancel = document.getElementById('wardrobe-cancel');
+  var $wardrobeConfirm = document.getElementById('wardrobe-confirm');
+  var $dailyCheck = document.getElementById('wardrobe-daily-check');
+  var $dailyLabel = document.getElementById('wardrobe-daily-label');
+  var $setInfo = document.getElementById('wardrobe-set-info');
+
+  // Preview elements
+  var $previewClothes = document.getElementById('wardrobe-clothes');
+  var $previewHead = document.getElementById('wardrobe-head');
+
+  // State
+  var currentTab = 'head';
+  var currentFilter = 'all';
+  var previewHead = '';
+  var previewBody = '';
+  var savedHead = '';
+  var savedBody = '';
+
+  function getTodayKey() {
+    var now = new Date();
+    return now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+  }
+
+  function isOwned(costumeId) {
+    return saveData.ownedCostumes.indexOf(costumeId) !== -1;
+  }
+
+  function getCostumesForTab(tab) {
+    return masterCostumes.filter(function(c) { return c.part === tab; });
+  }
+
+  function updatePreview() {
+    if (previewBody) {
+      $previewClothes.src = 'assets/' + previewBody + '.png';
+      $previewClothes.style.display = '';
+    } else {
+      $previewClothes.src = '';
+      $previewClothes.style.display = 'none';
+    }
+    if (previewHead) {
+      $previewHead.src = 'assets/' + previewHead + '.png';
+      $previewHead.style.display = '';
+    } else {
+      $previewHead.src = '';
+      $previewHead.style.display = 'none';
+    }
+    updateSetBonusInfo();
+  }
+
+  function updateSetBonusInfo() {
+    if (!$setInfo) return;
+    var headCostume = previewHead ? masterCostumes.find(function(c) { return c.id === previewHead; }) : null;
+    var bodyCostume = previewBody ? masterCostumes.find(function(c) { return c.id === previewBody; }) : null;
+    if (headCostume && bodyCostume && headCostume.set_id && headCostume.set_id === bodyCostume.set_id) {
+      var setBonus = (masterSetBonuses || []).find(function(s) { return s.set_id === headCostume.set_id; });
+      if (setBonus) {
+        $setInfo.textContent = '\uC138\uD2B8: ' + setBonus.name + ' \u2014 \uD150\uC158 \uC18C\uBAA8 -' + Math.round(setBonus.buffValue * 100) + '%';
+        $setInfo.classList.add('show');
+        return;
+      }
+    }
+    $setInfo.classList.remove('show');
+  }
+
+  function renderGrid() {
+    $wardrobeGrid.innerHTML = '';
+    var costumes = getCostumesForTab(currentTab);
+    var previewId = (currentTab === 'head') ? previewHead : previewBody;
+    var equippedId = (currentTab === 'head') ? savedHead : savedBody;
+
+    costumes.forEach(function(costume) {
+      var owned = isOwned(costume.id);
+      if (currentFilter === 'owned' && !owned) return;
+
+      var slot = document.createElement('div');
+      slot.className = 'wardrobe-slot grade-' + costume.grade.toLowerCase();
+      if (!owned) slot.classList.add('not-owned');
+      if (costume.id === equippedId) slot.classList.add('equipped');
+      if (costume.id === previewId) slot.classList.add('previewing');
+
+      var icon = document.createElement('img');
+      icon.className = 'wardrobe-slot-icon';
+      icon.src = 'assets/' + costume.id + '.png';
+      icon.alt = costume.name;
+      icon.draggable = false;
+      slot.appendChild(icon);
+
+      var nameEl = document.createElement('div');
+      nameEl.className = 'wardrobe-slot-name';
+      nameEl.textContent = costume.name;
+      slot.appendChild(nameEl);
+
+      if (costume.buffValue > 0) {
+        var buffEl = document.createElement('div');
+        buffEl.className = 'wardrobe-slot-buff';
+        buffEl.textContent = '+' + Math.round(costume.buffValue * 100) + '%';
+        slot.appendChild(buffEl);
+      }
+
+      if (owned) {
+        slot.addEventListener('click', function() {
+          if (currentTab === 'head') {
+            previewHead = costume.id;
+          } else {
+            previewBody = costume.id;
+          }
+          renderGrid();
+          updatePreview();
+        });
+      }
+
+      $wardrobeGrid.appendChild(slot);
+    });
+  }
+
+  function openWardrobe() {
+    if (saveData.streamerStatus.isLive) return;
+
+    savedHead = saveData.equippedHead || '';
+    savedBody = saveData.equippedBody || '';
+    previewHead = savedHead;
+    previewBody = savedBody;
+
+    var todayKey = getTodayKey();
+    var alreadyUsed = (saveData.dailyStylingDate === todayKey);
+    $dailyCheck.checked = false;
+    $dailyCheck.disabled = alreadyUsed;
+    $dailyLabel.classList.toggle('disabled', alreadyUsed);
+
+    var $charWrap = document.querySelector('.character-wrapper');
+    if ($charWrap) $charWrap.style.display = 'none';
+
+    currentTab = 'head';
+    currentFilter = 'all';
+    syncTabUI();
+    syncFilterUI();
+    updatePreview();
+    renderGrid();
+
+    $wardrobeBackdrop.classList.add('show');
+  }
+
+  function closeWardrobe() {
+    $wardrobeBackdrop.classList.remove('show');
+    var $charWrap = document.querySelector('.character-wrapper');
+    if ($charWrap) $charWrap.style.display = '';
+  }
+
+  function cancelWardrobe() {
+    previewHead = savedHead;
+    previewBody = savedBody;
+    closeWardrobe();
+  }
+
+  function confirmWardrobe() {
+    saveData.equippedHead = previewHead;
+    saveData.equippedBody = previewBody;
+    syncCostumeVisuals();
+
+    if ($dailyCheck.checked && !$dailyCheck.disabled) {
+      var todayKey = getTodayKey();
+      saveData.dailyStylingDate = todayKey;
+      saveData.streamerStatus.tension = 100;
+      saveData.currentExp = (saveData.currentExp || 0) + 100;
+    }
+
+    saveGame();
+    closeWardrobe();
+  }
+
+  function syncTabUI() {
+    var tabs = document.querySelectorAll('.wardrobe-tab');
+    for (var i = 0; i < tabs.length; i++) {
+      tabs[i].classList.toggle('active', tabs[i].getAttribute('data-tab') === currentTab);
+    }
+  }
+
+  function syncFilterUI() {
+    var filters = document.querySelectorAll('.wardrobe-filter');
+    for (var i = 0; i < filters.length; i++) {
+      filters[i].classList.toggle('active', filters[i].getAttribute('data-filter') === currentFilter);
+    }
+  }
+
+  // Events
+  var $btnCloset = document.getElementById('btn-closet');
+  if ($btnCloset) {
+    $btnCloset.addEventListener('click', openWardrobe);
+  }
+
+  if ($wardrobeCancel) {
+    $wardrobeCancel.addEventListener('click', cancelWardrobe);
+  }
+
+  if ($wardrobeConfirm) {
+    $wardrobeConfirm.addEventListener('click', confirmWardrobe);
+  }
+
+  var $tabs = document.querySelectorAll('.wardrobe-tab');
+  for (var i = 0; i < $tabs.length; i++) {
+    (function(tab) {
+      tab.addEventListener('click', function() {
+        currentTab = tab.getAttribute('data-tab');
+        syncTabUI();
+        renderGrid();
+      });
+    })($tabs[i]);
+  }
+
+  var $filters = document.querySelectorAll('.wardrobe-filter');
+  for (var i = 0; i < $filters.length; i++) {
+    (function(filter) {
+      filter.addEventListener('click', function() {
+        currentFilter = filter.getAttribute('data-filter');
+        syncFilterUI();
+        renderGrid();
+      });
+    })($filters[i]);
   }
 })();
 </script>
