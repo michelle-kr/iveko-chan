@@ -2318,6 +2318,102 @@ img {
   cursor: default;
   pointer-events: none;
 }
+
+/* ===== Touch System (소통) UI ===== */
+.touch-dialogue-box {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  height: 15%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.touch-dialogue-box.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.touch-dialogue-text {
+  color: #fff;
+  font-family: 'MulmaruMono', 'DosGothic', 'Noto Sans KR', sans-serif;
+  font-size: clamp(14px, 4vw, 18px);
+  line-height: 1.5;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+  white-space: pre-wrap;
+  word-break: keep-all;
+}
+
+.touch-dialogue-result {
+  position: absolute;
+  top: 8px;
+  right: 14px;
+  font-family: 'Orbitron', 'DosGothic', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-shadow: 0 0 6px currentColor;
+}
+.touch-dialogue-result.success { color: #ffcc66; }
+.touch-dialogue-result.great-success { color: #ff66aa; }
+.touch-dialogue-result.bored { color: #99aacc; }
+
+/* Heart VFX */
+.touch-heart {
+  position: absolute;
+  pointer-events: none;
+  z-index: 55;
+  font-size: 24px;
+  opacity: 1;
+  animation: heartFloat 1.2s ease-out forwards;
+}
+.touch-heart.great {
+  font-size: 36px;
+  animation: heartBounce 1.4s ease-out forwards;
+}
+
+@keyframes heartFloat {
+  0% { opacity: 1; transform: translateY(0) scale(0.5); }
+  30% { opacity: 1; transform: translateY(-20px) scale(1); }
+  100% { opacity: 0; transform: translateY(-60px) scale(0.8); }
+}
+
+@keyframes heartBounce {
+  0% { opacity: 1; transform: translateY(0) scale(0.3); }
+  20% { transform: translateY(-30px) scale(1.2); }
+  40% { transform: translateY(-15px) scale(1.0); }
+  60% { opacity: 1; transform: translateY(-40px) scale(1.1); }
+  100% { opacity: 0; transform: translateY(-80px) scale(0.7); }
+}
+
+/* Touch Debug UI */
+.touch-debug-ui {
+  position: absolute;
+  bottom: 15.5%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 61;
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.55);
+  font-family: 'Orbitron', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.5px;
+  pointer-events: none;
+  display: none;
+  white-space: nowrap;
+}
+#game-container.touch-mode .touch-debug-ui {
+  display: block;
+}
 </style>
 </head>
 <body>
@@ -2638,6 +2734,13 @@ img {
       </div>
     </div>
   </div>
+
+  <!-- ====== TOUCH DIALOGUE BOX ====== -->
+  <div class="touch-dialogue-box" id="touch-dialogue-box">
+    <div class="touch-dialogue-result" id="touch-dialogue-result"></div>
+    <div class="touch-dialogue-text" id="touch-dialogue-text"></div>
+  </div>
+  <div class="touch-debug-ui" id="touch-debug-ui">EN: 5/5 Daily: 0/200</div>
 
 </div>
 
@@ -2991,27 +3094,33 @@ var defaultData = {
   dailyStylingDate: '',
   inventory: {
     consumables: [
-      { id: 'itm_food_01', quantity: 12 },
-      { id: 'itm_food_02', quantity: 5 },
-      { id: 'itm_food_03', quantity: 3 },
-      { id: 'itm_food_04', quantity: 2 },
-      { id: 'itm_food_05', quantity: 1 },
+      { id: 'itm_food_01', quantity: 0 },
+      { id: 'itm_food_02', quantity: 0 },
+      { id: 'itm_food_03', quantity: 0 },
+      { id: 'itm_food_04', quantity: 0 },
+      { id: 'itm_food_05', quantity: 0 },
       { id: 'itm_food_06', quantity: 0 },
-      { id: 'itm_food_07', quantity: 1 },
+      { id: 'itm_food_07', quantity: 0 },
       { id: 'itm_food_08', quantity: 0 },
       { id: 'itm_food_09', quantity: 0 },
       { id: 'itm_food_10', quantity: 0 },
-      { id: 'itm_dessert_01', quantity: 3 },
-      { id: 'itm_dessert_02', quantity: 8 },
-      { id: 'itm_dessert_03', quantity: 4 },
-      { id: 'itm_dessert_04', quantity: 2 },
+      { id: 'itm_dessert_01', quantity: 0 },
+      { id: 'itm_dessert_02', quantity: 0 },
+      { id: 'itm_dessert_03', quantity: 0 },
+      { id: 'itm_dessert_04', quantity: 0 },
       { id: 'itm_dessert_05', quantity: 0 },
-      { id: 'itm_dessert_06', quantity: 1 },
+      { id: 'itm_dessert_06', quantity: 0 },
       { id: 'itm_dessert_07', quantity: 0 },
-      { id: 'itm_dessert_08', quantity: 1 },
+      { id: 'itm_dessert_08', quantity: 0 },
       { id: 'itm_dessert_09', quantity: 0 },
       { id: 'itm_dessert_10', quantity: 0 }
     ]
+  },
+  touchSystem: {
+    currentEnergy: 5,
+    lastRechargeTime: 0,
+    dailyTensionRecovered: 0,
+    dailyTouchResetDate: ''
   }
 };
 
@@ -3068,6 +3177,14 @@ function loadGame() {
     if (parsed.ownedCostumes.indexOf('costume_body_01') === -1) parsed.ownedCostumes.push('costume_body_01');
     if (parsed.ownedCostumes.indexOf('costume_body_03') === -1) parsed.ownedCostumes.push('costume_body_03');
     if (!parsed.streamerStatus.broadcastMode) parsed.streamerStatus.broadcastMode = 'talk';
+    // Touch system migration
+    if (!parsed.touchSystem || typeof parsed.touchSystem !== 'object') {
+      parsed.touchSystem = { currentEnergy: 5, lastRechargeTime: 0, dailyTensionRecovered: 0, dailyTouchResetDate: '' };
+    }
+    if (typeof parsed.touchSystem.currentEnergy !== 'number') parsed.touchSystem.currentEnergy = 5;
+    if (typeof parsed.touchSystem.lastRechargeTime !== 'number') parsed.touchSystem.lastRechargeTime = 0;
+    if (typeof parsed.touchSystem.dailyTensionRecovered !== 'number') parsed.touchSystem.dailyTensionRecovered = 0;
+    if (typeof parsed.touchSystem.dailyTouchResetDate !== 'string') parsed.touchSystem.dailyTouchResetDate = '';
     return parsed;
   } catch (e) {
     console.warn('[LOAD] 파싱 실패, 기본값 복구:', e);
@@ -3172,6 +3289,23 @@ function normalizeImportedData(parsed) {
       });
   }
 
+  // Touch system normalization
+  if (parsed.touchSystem && typeof parsed.touchSystem === 'object') {
+    var ts = parsed.touchSystem;
+    if (typeof ts.currentEnergy === 'number' && isFinite(ts.currentEnergy)) {
+      safe.touchSystem.currentEnergy = Math.max(0, Math.min(5, Math.floor(ts.currentEnergy)));
+    }
+    if (typeof ts.lastRechargeTime === 'number' && isFinite(ts.lastRechargeTime)) {
+      safe.touchSystem.lastRechargeTime = Math.max(0, ts.lastRechargeTime);
+    }
+    if (typeof ts.dailyTensionRecovered === 'number' && isFinite(ts.dailyTensionRecovered)) {
+      safe.touchSystem.dailyTensionRecovered = Math.max(0, Math.min(200, Math.floor(ts.dailyTensionRecovered)));
+    }
+    if (typeof ts.dailyTouchResetDate === 'string') {
+      safe.touchSystem.dailyTouchResetDate = ts.dailyTouchResetDate;
+    }
+  }
+
   return safe;
 }
 
@@ -3249,10 +3383,10 @@ importedFromURL = importSaveFromURL();
 var GC = {
   TENSION_DECAY_PER_SEC:   1 / 180,        // LIVE ON  : 3분당 −1
   TENSION_REGEN_PER_SEC:   1 / 60,         // LIVE OFF : 1분당 +1
-  EARNINGS_FEVER_PER_SEC:  3000 / 180,     // 텐션 90~100 (3분당 3,000원)
-  EARNINGS_HIGH_PER_SEC:   1000 / 180,     // 텐션 70~89  (3분당 1,000원)
-  EARNINGS_MID_PER_SEC:     500 / 180,     // 텐션 30~69  (3분당 500원)
-  EARNINGS_LOW_PER_SEC:      30 / 180,     // 텐션 0~29   (3분당 30원)
+  EARNINGS_FEVER_PER_SEC:  300 / 180,     // 텐션 90~100 (3분당 300원)
+  EARNINGS_HIGH_PER_SEC:   100 / 180,     // 텐션 70~89  (3분당 100원)
+  EARNINGS_MID_PER_SEC:     50 / 180,     // 텐션 30~69  (3분당 50원)
+  EARNINGS_LOW_PER_SEC:      3 / 180,     // 텐션 0~29   (3분당 3원)
   SUBS_FEVER_PER_SEC:        5 / 180,      // 텐션 90~100
   SUBS_HIGH_PER_SEC:         3 / 180,      // 텐션 70~89
   SUBS_MID_PER_SEC:          2 / 180,      // 텐션 30~69
@@ -4846,6 +4980,305 @@ function checkAndResetDailyFreeGacha() {
       });
     })($filters[i]);
   }
+})();
+
+// =========================================================
+//  소통(터치) 시스템 — Energy, Judgment, Dialogue, VFX
+// =========================================================
+(function () {
+  // ── 상수 ──
+  var MAX_ENERGY = 5;
+  var ENERGY_RECHARGE_SEC = 7200; // 2시간 (초)
+  var DAILY_TENSION_CAP = 200;
+  var SUCCESS_TENSION = 20;
+  var GREAT_SUCCESS_TENSION = 40;
+  var GREAT_SUCCESS_RATE = 0.20;
+  var TYPEWRITER_SPEED = 50;   // ms per char
+  var DIALOGUE_LINGER = 1500;  // ms after typing finishes
+  var FADEOUT_DURATION = 400;  // ms
+
+  // ── 대사 데이터 (더미 배열 — 기획자가 수정 가능) ──
+  var dialogues = {
+    success: [
+      "네...넵. 힘낼게요...",
+      "칭찬해 주셔서 감사합니다...",
+      "그렇게 말씀해주시니 좀 낫네요..."
+    ],
+    great_success: [
+      "... 더 열심히 할게요...!!!",
+      "그렇게까지 말씀해주시다니... 감사합니다...",
+      "에헤헤... 저, 정말 기뻐요..."
+    ],
+    bored: [
+      "스, 슬슬 방송하러 가야 할 것 같아요...",
+      "...(딴청)",
+      "...(먼 산을 본다)"
+    ]
+  };
+
+  // ── DOM ──
+  var $dialogueBox = document.getElementById('touch-dialogue-box');
+  var $dialogueText = document.getElementById('touch-dialogue-text');
+  var $dialogueResult = document.getElementById('touch-dialogue-result');
+  var $debugUI = document.getElementById('touch-debug-ui');
+  var $gameContainer = document.getElementById('game-container');
+
+  // ── 타이머 ──
+  var typewriterTimer = null;
+  var dialogueFadeTimer = null;
+  var dialogueHideTimer = null;
+  var touchCooldown = false;
+
+  // ── 유틸 ──
+  function getTouchDailyKey() {
+    var now = new Date();
+    return now.getFullYear() + '-' +
+      String(now.getMonth() + 1).padStart(2, '0') + '-' +
+      String(now.getDate()).padStart(2, '0');
+  }
+
+  function pickRandom(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  function ensureTouchSystem() {
+    if (!saveData.touchSystem || typeof saveData.touchSystem !== 'object') {
+      saveData.touchSystem = {
+        currentEnergy: MAX_ENERGY,
+        lastRechargeTime: 0,
+        dailyTensionRecovered: 0,
+        dailyTouchResetDate: ''
+      };
+    }
+    return saveData.touchSystem;
+  }
+
+  // ── 에너지 충전 (오프라인 보상 포함) ──
+  function rechargeEnergy() {
+    var ts = ensureTouchSystem();
+    if (ts.currentEnergy >= MAX_ENERGY) {
+      ts.lastRechargeTime = 0;
+      return;
+    }
+    var now = Date.now();
+    if (ts.lastRechargeTime <= 0) {
+      ts.lastRechargeTime = now;
+      return;
+    }
+    var elapsedMs = now - ts.lastRechargeTime;
+    var recharged = Math.floor(elapsedMs / (ENERGY_RECHARGE_SEC * 1000));
+    if (recharged > 0) {
+      ts.currentEnergy = Math.min(MAX_ENERGY, ts.currentEnergy + recharged);
+      ts.lastRechargeTime += recharged * ENERGY_RECHARGE_SEC * 1000;
+      if (ts.currentEnergy >= MAX_ENERGY) {
+        ts.lastRechargeTime = 0;
+      }
+    }
+  }
+
+  // ── 일일 리셋 (매일 00시) ──
+  function checkDailyReset() {
+    var ts = ensureTouchSystem();
+    var todayKey = getTouchDailyKey();
+    if (ts.dailyTouchResetDate !== todayKey) {
+      ts.dailyTensionRecovered = 0;
+      ts.dailyTouchResetDate = todayKey;
+    }
+  }
+
+  // ── 디버그 UI 갱신 ──
+  function updateDebugUI() {
+    var ts = ensureTouchSystem();
+    rechargeEnergy();
+    checkDailyReset();
+    if ($debugUI) {
+      $debugUI.textContent = 'EN: ' + ts.currentEnergy + '/' + MAX_ENERGY +
+        '  Daily: ' + ts.dailyTensionRecovered + '/' + DAILY_TENSION_CAP;
+    }
+  }
+
+  // ── 대사창 초기화 ──
+  function clearDialogue() {
+    if (typewriterTimer) { clearInterval(typewriterTimer); typewriterTimer = null; }
+    if (dialogueFadeTimer) { clearTimeout(dialogueFadeTimer); dialogueFadeTimer = null; }
+    if (dialogueHideTimer) { clearTimeout(dialogueHideTimer); dialogueHideTimer = null; }
+    $dialogueBox.classList.remove('show');
+    $dialogueText.textContent = '';
+    $dialogueResult.textContent = '';
+    $dialogueResult.className = 'touch-dialogue-result';
+  }
+
+  // ── 대사창 표시 (타이프라이터 + 페이드아웃) ──
+  function showDialogue(text, resultType) {
+    clearDialogue();
+
+    // 결과 레이블
+    var resultLabel = '';
+    var resultClass = '';
+    if (resultType === 'success') { resultLabel = 'SUCCESS'; resultClass = 'success'; }
+    else if (resultType === 'great_success') { resultLabel = 'GREAT!'; resultClass = 'great-success'; }
+    else if (resultType === 'bored') { resultLabel = '...'; resultClass = 'bored'; }
+
+    $dialogueResult.textContent = resultLabel;
+    $dialogueResult.className = 'touch-dialogue-result ' + resultClass;
+
+    // 페이드인
+    void $dialogueBox.offsetWidth; // force reflow
+    $dialogueBox.classList.add('show');
+
+    // 타이프라이터 효과
+    var charIndex = 0;
+    $dialogueText.textContent = '';
+    typewriterTimer = setInterval(function () {
+      if (charIndex < text.length) {
+        $dialogueText.textContent += text.charAt(charIndex);
+        charIndex++;
+      } else {
+        clearInterval(typewriterTimer);
+        typewriterTimer = null;
+        // 잠시 유지 후 페이드아웃
+        dialogueFadeTimer = setTimeout(function () {
+          $dialogueBox.classList.remove('show');
+          dialogueHideTimer = setTimeout(function () {
+            $dialogueText.textContent = '';
+          }, FADEOUT_DURATION + 50);
+        }, DIALOGUE_LINGER);
+      }
+    }, TYPEWRITER_SPEED);
+  }
+
+  // ── 하트 이펙트 ──
+  function spawnHeart(x, y, isGreat) {
+    var heart = document.createElement('div');
+    heart.className = 'touch-heart' + (isGreat ? ' great' : '');
+    heart.textContent = '\u2764\uFE0F';
+
+    var offsetX = (Math.random() - 0.5) * 80;
+    var offsetY = (Math.random() - 0.5) * 40;
+    heart.style.left = (x + offsetX) + 'px';
+    heart.style.top = (y + offsetY) + 'px';
+
+    $gameContainer.appendChild(heart);
+    var duration = isGreat ? 1400 : 1200;
+    setTimeout(function () {
+      if (heart.parentNode) heart.parentNode.removeChild(heart);
+    }, duration);
+  }
+
+  function spawnHearts(x, y, resultType) {
+    if (resultType === 'success') {
+      var countS = 1 + Math.floor(Math.random() * 2); // 1~2
+      for (var i = 0; i < countS; i++) {
+        spawnHeart(x, y, false);
+      }
+    } else if (resultType === 'great_success') {
+      var countG = 4 + Math.floor(Math.random() * 2); // 4~5
+      for (var j = 0; j < countG; j++) {
+        spawnHeart(x, y, true);
+      }
+    }
+    // bored: 하트 없음
+  }
+
+  // ── 터치 판정 ──
+  function processTouchJudgment(clickX, clickY) {
+    if (touchCooldown) return;
+
+    var ts = ensureTouchSystem();
+    rechargeEnergy();
+    checkDailyReset();
+
+    var resultType;
+    var tensionGain = 0;
+
+    // 1. 에너지 체크
+    if (ts.currentEnergy <= 0) {
+      resultType = 'bored';
+    }
+    // 2. 일일 제한 체크
+    else if (ts.dailyTensionRecovered >= DAILY_TENSION_CAP) {
+      resultType = 'bored';
+    }
+    // 3. 확률 판정 (에너지 1 이상)
+    else {
+      // 에너지 소모
+      ts.currentEnergy--;
+      if (ts.currentEnergy < MAX_ENERGY && ts.lastRechargeTime <= 0) {
+        ts.lastRechargeTime = Date.now();
+      }
+
+      // 대성공 20% / 성공 80%
+      if (Math.random() < GREAT_SUCCESS_RATE) {
+        resultType = 'great_success';
+        tensionGain = GREAT_SUCCESS_TENSION;
+      } else {
+        resultType = 'success';
+        tensionGain = SUCCESS_TENSION;
+      }
+
+      // 4. 일일 상한 보정
+      var remaining = DAILY_TENSION_CAP - ts.dailyTensionRecovered;
+      if (tensionGain > remaining) {
+        tensionGain = remaining;
+      }
+
+      // 5. 텐션 반영
+      var ss = saveData.streamerStatus;
+      ss.tension = Math.min(100, ss.tension + tensionGain);
+
+      // 일일 회복량 기록
+      ts.dailyTensionRecovered += tensionGain;
+
+      // 인연 경험치 (유효 소통 시 텐션량만큼 증가)
+      if (tensionGain > 0) {
+        saveData.currentExp = (saveData.currentExp || 0) + tensionGain;
+      }
+    }
+
+    // 쿨타임
+    touchCooldown = true;
+    setTimeout(function () { touchCooldown = false; }, 500);
+
+    // 시각적 연출
+    var dialogue = pickRandom(dialogues[resultType]);
+    showDialogue(dialogue, resultType);
+    spawnHearts(clickX, clickY, resultType);
+
+    updateDebugUI();
+    saveGame();
+  }
+
+  // ── 소통 모드 클릭 핸들러 ──
+  $gameContainer.addEventListener('click', function (e) {
+    if (!isTouchMode) return;
+    if (e.target.closest('.mb, .mbw, #mo, #top-hud, .touch-dialogue-box, .touch-debug-ui')) return;
+    if (e.target.closest('[class*="backdrop"]')) return;
+
+    var rect = $gameContainer.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    var y = e.clientY - rect.top;
+
+    processTouchJudgment(x, y);
+  });
+
+  // ── 소통 모드 종료 시 대사창 닫기 ──
+  var origTouchBtn = document.getElementById('btn-touch');
+  if (origTouchBtn) {
+    origTouchBtn.addEventListener('click', function () {
+      if (!$gameContainer.classList.contains('touch-mode')) {
+        clearDialogue();
+      }
+    });
+  }
+
+  // ── 주기적 디버그 UI 갱신 (에너지 충전 실시간 반영) ──
+  setInterval(updateDebugUI, 1000);
+
+  // ── 초기화 ──
+  ensureTouchSystem();
+  rechargeEnergy();
+  checkDailyReset();
+  updateDebugUI();
 })();
 </script>
 

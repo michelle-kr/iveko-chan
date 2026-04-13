@@ -7,18 +7,18 @@
   { "id": "itm_dessert_02", "name": "컬러풀 마카롱", "grade": "COMMON", "tensionGain": 5, "description": "한 입에 쏙 들어가는 달콤함." },
   { "id": "itm_dessert_05", "name": "푹신 솜사탕", "grade": "COMMON", "tensionGain": 5, "description": "입안에서 사르르 녹는 기적의 단맛." },
 
-  { "id": "itm_food_04", "name": "매니저표 비빔밥", "grade": "RARE", "tensionGain": 15, "description": "고기와 야채의 조화가 완벽한 매니저표 비빔밥." },
-  { "id": "itm_food_06", "name": "야채 가득 도시락", "grade": "RARE", "tensionGain": 15, "description": "건강을 생각한 신선한 도시락." },
-  { "id": "itm_food_05", "name": "더블 치즈 햄버거", "grade": "RARE", "tensionGain": 15, "description": "고칼로리는 언제나 정답입니다." },
-  { "id": "itm_dessert_06", "name": "생크림 도넛", "grade": "RARE", "tensionGain": 15, "description": "당 충전이 필요할 땐 역시 도넛." },
-  { "id": "itm_dessert_01", "name": "딸기 쇼트 케이크", "grade": "RARE", "tensionGain": 15, "description": "달콤한 딸기가 올라간 부드러운 케이크." },
-  { "id": "itm_dessert_07", "name": "계절 과일 파르페", "grade": "RARE", "tensionGain": 15, "description": "눈과 입이 모두 즐거운 화려한 디저트." },
-  { "id": "itm_dessert_08", "name": "진한 티라미수", "grade": "RARE", "tensionGain": 15, "description": "기운이 번쩍 나는 정통 티라미수." },
+  { "id": "itm_food_04", "name": "매니저표 비빔밥", "grade": "RARE", "tensionGain": 10, "description": "고기와 야채의 조화가 완벽한 매니저표 비빔밥." },
+  { "id": "itm_food_06", "name": "야채 가득 도시락", "grade": "RARE", "tensionGain": 10, "description": "건강을 생각한 신선한 도시락." },
+  { "id": "itm_food_05", "name": "더블 치즈 햄버거", "grade": "RARE", "tensionGain": 10, "description": "고칼로리는 언제나 정답입니다." },
+  { "id": "itm_dessert_06", "name": "생크림 도넛", "grade": "RARE", "tensionGain": 10, "description": "당 충전이 필요할 땐 역시 도넛." },
+  { "id": "itm_dessert_01", "name": "딸기 쇼트 케이크", "grade": "RARE", "tensionGain": 10, "description": "달콤한 딸기가 올라간 부드러운 케이크." },
+  { "id": "itm_dessert_07", "name": "계절 과일 파르페", "grade": "RARE", "tensionGain": 10, "description": "눈과 입이 모두 즐거운 화려한 디저트." },
+  { "id": "itm_dessert_08", "name": "진한 티라미수", "grade": "RARE", "tensionGain": 10, "description": "기운이 번쩍 나는 정통 티라미수." },
 
-  { "id": "itm_food_10", "name": "럭셔리 전복죽", "grade": "LEGENDARY", "tensionGain": 50, "description": "속에도 좋고 영양도 만점인 전복죽." },
-  { "id": "itm_food_09", "name": "원기 회복 장어 덮밥", "grade": "LEGENDARY", "tensionGain": 50, "description": "밤샘 방송도 거뜬하게 만드는 보양식." },
-  { "id": "itm_food_07", "name": "육즙 가득 스테이크", "grade": "LEGENDARY", "tensionGain": 50, "description": "이런 고급 음식을 먹다니... 파산하는 건 아닐까?" },
-  { "id": "itm_food_08", "name": "특선 초밥 세트", "grade": "LEGENDARY", "tensionGain": 50, "description": "다양한 생선들이 올라간 초밥 세트." },
-  { "id": "itm_dessert_09", "name": "갤럭시 은하수 젤리", "grade": "LEGENDARY", "tensionGain": 50, "description": "우주적 영감이 떠오르는 신비한 젤리." },
-  { "id": "itm_dessert_10", "name": "황금 벌집 크로플", "grade": "LEGENDARY", "tensionGain": 50, "description": "바삭함과 달콤함의 완벽한 조화." }
+  { "id": "itm_food_10", "name": "럭셔리 전복죽", "grade": "LEGENDARY", "tensionGain": 30, "description": "속에도 좋고 영양도 만점인 전복죽." },
+  { "id": "itm_food_09", "name": "원기 회복 장어 덮밥", "grade": "LEGENDARY", "tensionGain": 30, "description": "밤샘 방송도 거뜬하게 만드는 보양식." },
+  { "id": "itm_food_07", "name": "육즙 가득 스테이크", "grade": "LEGENDARY", "tensionGain": 30, "description": "이런 고급 음식을 먹다니... 파산하는 건 아닐까?" },
+  { "id": "itm_food_08", "name": "특선 초밥 세트", "grade": "LEGENDARY", "tensionGain": 30, "description": "다양한 생선들이 올라간 초밥 세트." },
+  { "id": "itm_dessert_09", "name": "갤럭시 은하수 젤리", "grade": "LEGENDARY", "tensionGain": 30, "description": "우주적 영감이 떠오르는 신비한 젤리." },
+  { "id": "itm_dessert_10", "name": "황금 벌집 크로플", "grade": "LEGENDARY", "tensionGain": 30, "description": "바삭함과 달콤함의 완벽한 조화." }
 ]
