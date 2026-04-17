@@ -1055,6 +1055,17 @@ img {
   text-shadow: 0 0 6px rgba(200, 140, 255, 0.5);
 }
 
+.support-daily-limit {
+  text-align: center;
+  font-family: 'DosGothic', 'Noto Sans KR', sans-serif;
+  font-size: 13px;
+  color: #c8a0e8;
+  margin-top: 2px;
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
+  opacity: 0.85;
+}
+
 .support-section-label {
   font-family: 'DosGothic', 'Noto Sans KR', sans-serif;
   font-size: 20px;
@@ -2092,7 +2103,27 @@ img {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(ellipse at 50% 60%, rgba(60, 30, 80, 0.4), transparent);
+  background-image: url('assets/bg_closet.webp');
+  background-size: cover;
+  background-position: 50% 70%;
+  z-index: 0;
+}
+
+.wardrobe-preview::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: inherit;
+  background-size: inherit;
+  background-position: inherit;
+  filter: blur(1px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.wardrobe-preview > * {
+  position: relative;
+  z-index: 1;
 }
 
 .wardrobe-char-container {
@@ -2112,6 +2143,7 @@ img {
 .wardrobe-char-container #wardrobe-face { z-index: 30; }
 .wardrobe-char-container #wardrobe-clothes { z-index: 40; }
 .wardrobe-char-container #wardrobe-head { z-index: 50; }
+.wardrobe-char-container .chara-shadow {bottom:-2.5%; width: 110px; height: 60px;}
 
 .wardrobe-set-info {
   position: absolute;
@@ -2587,6 +2619,7 @@ img {
     <div class="support-modal">
       <button class="support-close" id="support-close">&times;</button>
       <div class="support-modal-title">SUPPORT</div>
+      <div class="support-daily-limit" id="support-daily-limit">일일 회복 상한 0/200</div>
       <div class="support-grid" id="support-grid-items"></div>
     </div>
   </div>
@@ -2711,6 +2744,7 @@ img {
         <img id="wardrobe-face" src="assets/face_default.png" alt="" draggable="false">
         <img id="wardrobe-clothes" src="" alt="" draggable="false">
         <img id="wardrobe-head" src="" alt="" draggable="false" style="display:none">
+        <div class="chara-shadow"></div>
       </div>
       <div class="wardrobe-set-info" id="wardrobe-set-info"></div>
     </div>
@@ -3074,6 +3108,8 @@ $container.addEventListener('click', function(e) {
 //  세이브 시스템 — LocalStorage 기반
 // =========================================================
 var SAVE_KEY = 'ibeco_save';
+var DAILY_FREE_GACHA_LIMIT = 1;
+var DAILY_FOOD_RECOVERY_LIMIT = 200;
 
 var defaultData = {
   managerLevel: 1,
@@ -3087,7 +3123,7 @@ var defaultData = {
   },
   pityCount: 0,
   lastSaveTime: 0,
-  dailyFreeGacha: { count: 3, lastResetDate: '' },
+  dailyFreeGacha: { count: DAILY_FREE_GACHA_LIMIT, lastResetDate: '' },
   ownedCostumes: ['costume_body_01', 'costume_body_03'],
   equippedHead: '',
   equippedBody: 'costume_body_01',
@@ -3116,6 +3152,8 @@ var defaultData = {
       { id: 'itm_dessert_10', quantity: 0 }
     ]
   },
+  dailyFoodRecovered: 0,
+  dailyFoodResetDate: '',
   touchSystem: {
     currentEnergy: 5,
     lastRechargeTime: 0,
@@ -3171,7 +3209,12 @@ function loadGame() {
     if (typeof parsed.pityCount !== 'number') parsed.pityCount = 0;
     if (typeof parsed.lastSaveTime !== 'number') parsed.lastSaveTime = 0;
     if (!parsed.dailyFreeGacha || typeof parsed.dailyFreeGacha !== 'object') {
-      parsed.dailyFreeGacha = { count: 3, lastResetDate: '' };
+      parsed.dailyFreeGacha = { count: DAILY_FREE_GACHA_LIMIT, lastResetDate: '' };
+    } else {
+      parsed.dailyFreeGacha.count = (typeof parsed.dailyFreeGacha.count === 'number' && isFinite(parsed.dailyFreeGacha.count))
+        ? Math.max(0, Math.min(DAILY_FREE_GACHA_LIMIT, Math.floor(parsed.dailyFreeGacha.count)))
+        : DAILY_FREE_GACHA_LIMIT;
+      if (typeof parsed.dailyFreeGacha.lastResetDate !== 'string') parsed.dailyFreeGacha.lastResetDate = '';
     }
     if (!Array.isArray(parsed.ownedCostumes)) parsed.ownedCostumes = [];
     if (parsed.ownedCostumes.indexOf('costume_body_01') === -1) parsed.ownedCostumes.push('costume_body_01');
@@ -3185,6 +3228,9 @@ function loadGame() {
     if (typeof parsed.touchSystem.lastRechargeTime !== 'number') parsed.touchSystem.lastRechargeTime = 0;
     if (typeof parsed.touchSystem.dailyTensionRecovered !== 'number') parsed.touchSystem.dailyTensionRecovered = 0;
     if (typeof parsed.touchSystem.dailyTouchResetDate !== 'string') parsed.touchSystem.dailyTouchResetDate = '';
+    // Food daily recovery migration
+    if (typeof parsed.dailyFoodRecovered !== 'number') parsed.dailyFoodRecovered = 0;
+    if (typeof parsed.dailyFoodResetDate !== 'string') parsed.dailyFoodResetDate = '';
     return parsed;
   } catch (e) {
     console.warn('[LOAD] 파싱 실패, 기본값 복구:', e);
@@ -3258,7 +3304,9 @@ function normalizeImportedData(parsed) {
 
   if (parsed.dailyFreeGacha && typeof parsed.dailyFreeGacha === 'object') {
     var fg = parsed.dailyFreeGacha;
-    safe.dailyFreeGacha.count = (typeof fg.count === 'number' && isFinite(fg.count)) ? Math.max(0, Math.floor(fg.count)) : 3;
+    safe.dailyFreeGacha.count = (typeof fg.count === 'number' && isFinite(fg.count))
+      ? Math.max(0, Math.min(DAILY_FREE_GACHA_LIMIT, Math.floor(fg.count)))
+      : DAILY_FREE_GACHA_LIMIT;
     safe.dailyFreeGacha.lastResetDate = (typeof fg.lastResetDate === 'string') ? fg.lastResetDate : '';
   }
 
@@ -3288,6 +3336,12 @@ function normalizeImportedData(parsed) {
         };
       });
   }
+
+  // Food daily recovery normalization
+  if (typeof parsed.dailyFoodRecovered === 'number' && isFinite(parsed.dailyFoodRecovered)) {
+    safe.dailyFoodRecovered = Math.max(0, Math.min(DAILY_FOOD_RECOVERY_LIMIT, Math.floor(parsed.dailyFoodRecovered)));
+  }
+  if (typeof parsed.dailyFoodResetDate === 'string') safe.dailyFoodResetDate = parsed.dailyFoodResetDate;
 
   // Touch system normalization
   if (parsed.touchSystem && typeof parsed.touchSystem === 'object') {
@@ -3749,6 +3803,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var $supportBackdrop  = document.getElementById('support-backdrop');
   var $supportClose     = document.getElementById('support-close');
   var $gridItems     = document.getElementById('support-grid-items');
+  var $dailyLimitLabel = document.getElementById('support-daily-limit');
   var $detailBackdrop = document.getElementById('detail-backdrop');
   var $detailClose   = document.getElementById('detail-close');
   var $detailIcon    = document.getElementById('detail-icon');
@@ -3806,8 +3861,25 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  // ── 일일 음식 회복 상한 리셋 ──
+  function checkAndResetDailyFood() {
+    var todayKey = getDailyResetDateKey();
+    if (saveData.dailyFoodResetDate !== todayKey) {
+      saveData.dailyFoodRecovered = 0;
+      saveData.dailyFoodResetDate = todayKey;
+    }
+  }
+
+  function syncDailyLimitLabel() {
+    checkAndResetDailyFood();
+    if ($dailyLimitLabel) {
+      $dailyLimitLabel.textContent = '일일 회복 상한 ' + Math.floor(saveData.dailyFoodRecovered || 0) + '/' + DAILY_FOOD_RECOVERY_LIMIT;
+    }
+  }
+
   // ── 1차 모달 열기/닫기 ──
   function openSupport() {
+    syncDailyLimitLabel();
     renderGrid();
     $supportBackdrop.classList.add('show');
   }
@@ -3852,10 +3924,21 @@ document.addEventListener('DOMContentLoaded', function() {
     var qty = getQuantity(selectedItem.id);
     if (qty <= 0) return;
 
+    // 일일 음식 회복 상한 체크
+    checkAndResetDailyFood();
+    var remaining = DAILY_FOOD_RECOVERY_LIMIT - (saveData.dailyFoodRecovered || 0);
+    if (remaining <= 0) {
+      alert('오늘의 음식 회복 상한(200)에 도달했습니다!');
+      return;
+    }
+
     var ss = saveData.streamerStatus;
-    ss.tension = Math.min(100, ss.tension + selectedItem.tensionGain);
+    var gain = Math.min(selectedItem.tensionGain, remaining);
+    ss.tension = Math.min(100, ss.tension + gain);
+    saveData.dailyFoodRecovered = (saveData.dailyFoodRecovered || 0) + gain;
     setQuantity(selectedItem.id, -1);
 
+    syncDailyLimitLabel();
     closeDetail();
     closeSupport();
     saveGame(); // 아이템 사용 직후 즉시 저장
@@ -4308,11 +4391,13 @@ function getDailyResetDateKey() {
 function checkAndResetDailyFreeGacha() {
   var todayKey = getDailyResetDateKey();
   if (!saveData.dailyFreeGacha) {
-    saveData.dailyFreeGacha = { count: 3, lastResetDate: '' };
+    saveData.dailyFreeGacha = { count: DAILY_FREE_GACHA_LIMIT, lastResetDate: '' };
   }
   if (saveData.dailyFreeGacha.lastResetDate !== todayKey) {
-    saveData.dailyFreeGacha.count = 3;
+    saveData.dailyFreeGacha.count = DAILY_FREE_GACHA_LIMIT;
     saveData.dailyFreeGacha.lastResetDate = todayKey;
+  } else {
+    saveData.dailyFreeGacha.count = Math.max(0, Math.min(DAILY_FREE_GACHA_LIMIT, Math.floor(saveData.dailyFreeGacha.count || 0)));
   }
 }
 
@@ -4410,7 +4495,7 @@ function checkAndResetDailyFreeGacha() {
     // 10연차: 무료 횟수가 남아있으면 무조건 활성화
     if (freeCount > 0) {
       if ($pullSmartLabel) $pullSmartLabel.textContent = '10번 뽑기';
-      if ($pullSmartCostValue) $pullSmartCostValue.textContent = '무료 ' + freeCount + '/' + 3;
+      if ($pullSmartCostValue) $pullSmartCostValue.textContent = '무료 ' + freeCount + '/' + DAILY_FREE_GACHA_LIMIT;
       $pullSmartBtn.disabled = false;
       $pullSmartBtn.classList.remove('show-insufficient');
     } else {
@@ -4573,7 +4658,7 @@ function checkAndResetDailyFreeGacha() {
       var retryLabel = '다시 뽑기 (' + lastPullCount + '회)';
       var retryBadge = '<span class="gacha-insufficient-badge">자금 부족</span>';
       if (canFree) {
-        retryLabel = '다시 뽑기 (10회·무료 ' + freeCount + '/' + 3 + ')';
+        retryLabel = '다시 뽑기 (10회·무료 ' + freeCount + '/' + DAILY_FREE_GACHA_LIMIT + ')';
       }
       $retryBtn.innerHTML = retryLabel + retryBadge;
       $retryBtn.disabled = isInsufficient;
