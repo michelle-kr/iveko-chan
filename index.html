@@ -1048,8 +1048,8 @@ img {
 
 .support-modal-title {
   text-align: center;
-  font-family: 'DosGothic', 'Noto Sans KR', sans-serif;
-  font-size: 30px;
+  font-family: 'MulmaruMono', 'Noto Sans KR', sans-serif;
+  font-size: 24px;
   color: #e0c0ff;
   letter-spacing: 1px;
   text-shadow: 0 0 6px rgba(200, 140, 255, 0.5);
@@ -1057,8 +1057,8 @@ img {
 
 .support-daily-limit {
   text-align: center;
-  font-family: 'DosGothic', 'Noto Sans KR', sans-serif;
-  font-size: 13px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 16px;
   color: #c8a0e8;
   margin-top: 2px;
   margin-bottom: 4px;
@@ -1394,7 +1394,7 @@ img {
 
 .gacha-entry-title, .gacha-entry-info {
   text-align: center;
-  font-size: 20px;
+  font-size: 24px;
   color: #e0c0ff;
   letter-spacing: 1px;
   text-shadow: 0 0 8px rgba(200, 140, 255, 0.6);
@@ -2550,7 +2550,7 @@ img {
         <span class="bub" id="daily-gacha-bubble">일일 뽑기 가능!</span>
         <button class="mb" id="btn-gacha">
           <span class="ic"></span>
-          <span class="su">영업</span>
+          <span class="su">협찬</span>
         </button>
       </div>
     </div>
@@ -2618,7 +2618,7 @@ img {
   <div class="support-backdrop" id="support-backdrop">
     <div class="support-modal">
       <button class="support-close" id="support-close">&times;</button>
-      <div class="support-modal-title">SUPPORT</div>
+      <div class="support-modal-title">식사 서포트</div>
       <div class="support-daily-limit" id="support-daily-limit">일일 회복 상한 0/200</div>
       <div class="support-grid" id="support-grid-items"></div>
     </div>
@@ -2648,7 +2648,7 @@ img {
   <div class="gacha-entry-backdrop" id="gacha-entry-backdrop">
     <div class="gacha-entry-modal">
       <button class="gacha-entry-close" id="gacha-entry-close">&times;</button>
-      <div class="gacha-entry-title">영업 준비</div>
+      <div class="gacha-entry-title">협찬</div>
       <div class="gacha-entry-info">영업을 통해 협찬 물품을 제공받습니다.<br>영업에는 운영 자금이 필요합니다.</div>
       <div class="gacha-entry-btns">
         <button class="gacha-entry-btn one" id="gacha-pull-one">
@@ -3437,10 +3437,10 @@ importedFromURL = importSaveFromURL();
 var GC = {
   TENSION_DECAY_PER_SEC:   1 / 180,        // LIVE ON  : 3분당 −1
   TENSION_REGEN_PER_SEC:   1 / 60,         // LIVE OFF : 1분당 +1
-  EARNINGS_FEVER_PER_SEC:  300 / 180,     // 텐션 90~100 (3분당 300원)
-  EARNINGS_HIGH_PER_SEC:   100 / 180,     // 텐션 70~89  (3분당 100원)
-  EARNINGS_MID_PER_SEC:     50 / 180,     // 텐션 30~69  (3분당 50원)
-  EARNINGS_LOW_PER_SEC:      3 / 180,     // 텐션 0~29   (3분당 3원)
+  EARNINGS_FEVER_PER_SEC:  3000 / 180,     // 텐션 90~100 (3분당 3,000원)
+  EARNINGS_HIGH_PER_SEC:   1000 / 180,     // 텐션 70~89  (3분당 1,000원)
+  EARNINGS_MID_PER_SEC:     500 / 180,     // 텐션 30~69  (3분당 500원)
+  EARNINGS_LOW_PER_SEC:      30 / 180,     // 텐션 0~29   (3분당 30원)
   SUBS_FEVER_PER_SEC:        5 / 180,      // 텐션 90~100
   SUBS_HIGH_PER_SEC:         3 / 180,      // 텐션 70~89
   SUBS_MID_PER_SEC:          2 / 180,      // 텐션 30~69
@@ -4405,10 +4405,10 @@ function checkAndResetDailyFreeGacha() {
 //  영업(가챠) 시스템 — 진입 모달 + 가변 연차 + SKIP + 천장
 // =========================================================
 (function () {
-  var GACHA_COST = 2000;
+  var GACHA_COST = 20000;
   var MAX_SMART_PULL = 10;
   var PITY_THRESHOLD = 100;
-  var REFUND = { COMMON: 200, RARE: 500, LEGENDARY: 2000 };
+  var REFUND = { COMMON: 2000, RARE: 5000, LEGENDARY: 20000 };
   var GRADE_WEIGHTS = { COMMON: 80, RARE: 15, LEGENDARY: 5 };
   var CATEGORY_ITEM_PCT = 98.5;
   var REVEAL_DELAY = 200;
